@@ -3,6 +3,10 @@
 A 4 minute 53 second opening presentation for the first all-staff meeting of the
 Office of the President of the General Assembly, 81st Session.
 
+**Review copy — https://mafiatun.github.io/opga-welcome/**
+Click once to start; the browser will not play sound until you do. Everything
+else is identical to what runs in the room.
+
 It runs hands-free, entirely offline, in Chrome, and it is narrated
 end to end in a woman's voice.
 
@@ -33,6 +37,16 @@ will behave identically.
 
 It auto-plays the whole run. The keys are there so you can hold on a moment if
 the room reacts, or skip ahead if you are short on time.
+
+### Hosted vs. the room
+
+`present.command` opens the page as `index.html?room=1` and launches Chrome with
+`--autoplay-policy`, so the voice starts on its own and there is no start card.
+
+A hosted copy cannot be given that flag — no web page can — so anywhere else the
+presentation holds on a **start card** and begins the picture and the voice
+together on the first click. That is why the GitHub Pages link asks for a click
+and the room does not.
 
 ### Before you present
 
@@ -127,8 +141,12 @@ sync, survives pause and scene jumps, and that the last line still lands over
 the held final card. Use `npm run check:full` to play the whole 4:53, or add
 `--headed` to watch it and get a true frame-rate reading.
 
+**`npm run check:hosted`** proves the start card behaves in both cases: shown
+where sound needs a gesture, absent where it does not. Point it at the live site
+with `node tools/check-hosted.mjs --url https://mafiatun.github.io/opga-welcome/`.
+
 Playwright is a development dependency only — `npm install` is needed to run the
-check, never to present. If `node_modules/` is missing, `present.command` still
+checks, never to present. If `node_modules/` is missing, `present.command` still
 works exactly as it does now.
 
 Open `selfcheck.html` to step the whole timeline and confirm it still runs clean.
@@ -254,6 +272,19 @@ local. Playwright is needed only to run `tools/check-playback.mjs`, never to
 present.
 
 ---
+
+## Published copy
+
+The review link above is a **public** GitHub Pages site: anyone with the URL can
+open it, and it carries the real roster — names, nationalities, gender, titles,
+grades, contract types and 23 headshots. Twenty of those rows still contain a
+nationality or language that was inferred rather than read from the directory
+(see `verify.html`). Take the site down with `gh api -X DELETE repos/MafiAtUN/opga-welcome/pages`,
+or make the repository private, if that is not wanted.
+
+The source documents are deliberately **not** committed — the 93MB 80th-session
+PDF and the two internal `.docx` drafts are excluded in `.gitignore`. Everything
+transcribed from them lives in `data/`.
 
 ## Known limits
 
