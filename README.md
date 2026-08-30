@@ -51,8 +51,9 @@ and the room does not.
 ### Before you present
 
 - Open it once on the machine you will actually present from, and let it run
-  through — the first load samples the logo and builds the globe, which takes a
-  second or two.
+  through. It is ready in about three seconds: it samples the logo into
+  particles, rasterises a land mask and places 16,000 points on it, then waits
+  for the voice track to be loaded and seekable.
 - Set the display to 1920×1080 or any 16:9 mode. The layout scales off viewport
   width, so it adapts, but 16:9 is what it was composed for.
 - Flag emoji and non-Latin scripts (Arabic, Bangla, CJK) use the system fonts.
@@ -265,7 +266,10 @@ scene transforms into the next.
   from that. Lighting a country is one array write, not an animation.
 
 - **`src/globe.js`** — land points are distributed with a Fibonacci sphere and
-  filtered against the land mask. Country membership is resolved with
+  filtered against a rasterised land mask. Testing 60,000 candidates with
+  `d3.geoContains` took fifteen seconds of loading screen; drawing the same
+  geometry into a bitmap and sampling it takes milliseconds, and at one dot per
+  few hundred kilometres nothing on screen can tell the difference. Country membership is resolved with
   `d3.geoContains` against only the ~31 nations we have staff from, rejected by
   bounding box first. Barbados, Saint Kitts and Nevis and the Dominican Republic
   are too small for the 110m atlas, so they get an explicit cluster of dots at

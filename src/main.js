@@ -73,6 +73,11 @@ init().catch((err) => {
 async function init() {
   setupThree();
 
+  // Start the voiceover downloading immediately, so the megabytes come over
+  // the wire while the globe is being built rather than after it. On a hosted
+  // copy that is several seconds off the wait before anything appears.
+  app.narration = attachNarration(app, TOTAL);
+
   const [logoShape, landTopo, countriesTopo] = await Promise.all([
     sampleImage('assets/logo.png', COUNT, { width: 320, targetHeight: 118 }),
     fetch('vendor/land-110m.json').then((r) => r.json()),
@@ -104,10 +109,10 @@ async function init() {
   buildTimeline();
   bindKeys();
 
-  // The spoken track. It follows app.tl, so it needs nothing from the scene
-  // builders — but the first line arrives at 5.6s, so wait for it to buffer
-  // rather than starting the run and catching up.
-  app.narration = attachNarration(app, TOTAL);
+  // The first line arrives at 5.6s, so wait for the track to be loaded and
+  // seekable rather than starting the run and catching up. The download began
+  // before the globe was built, so by now it is usually already done.
+  boot.textContent = 'Preparing the voice';
   await app.narration.ready;
 
   boot.style.transition = 'opacity 0.5s ease';

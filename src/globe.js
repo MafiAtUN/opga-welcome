@@ -49,17 +49,52 @@ export function shortestAngle(current, target) {
  * Returns { positions, colors, countryOf } where countryOf[i] is the country
  * name for particle i, or null.
  */
+/**
+ * A land/sea mask, rasterised once.
+ *
+ * Testing 60,000 candidate points against the land multipolygon with
+ * `d3.geoContains` took the best part of fifteen seconds — the whole of the
+ * loading screen. Drawing the same geometry into an equirectangular bitmap and
+ * sampling it is a constant-time lookup per point and finishes in
+ * milliseconds. The coastline is a pixel rougher; at one dot per few hundred
+ * kilometres, nothing on screen can tell.
+ */
+function landMask(landFeature, width = 2048) {
+  const height = width / 2;
+  const cv = document.createElement('canvas');
+  cv.width = width; cv.height = height;
+  const ctx = cv.getContext('2d', { willReadFrequently: true });
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, width, height);
+
+  const projection = window.d3.geoEquirectangular()
+    .translate([width / 2, height / 2])
+    .scale(width / (2 * Math.PI));
+  const path = window.d3.geoPath(projection, ctx);
+  ctx.fillStyle = '#fff';
+  ctx.beginPath();
+  path(landFeature);
+  ctx.fill();
+
+  const data = ctx.getImageData(0, 0, width, height).data;
+  return (lat, lng) => {
+    const x = Math.min(width - 1, Math.max(0, Math.round((lng + 180) / 360 * width)));
+    const y = Math.min(height - 1, Math.max(0, Math.round((90 - lat) / 180 * height)));
+    return data[(y * width + x) * 4] > 127;
+  };
+}
+
 export function buildLandPoints(count, landFeature, wanted) {
   const cands = Math.ceil(count / 0.28) + 4000;   // land is ~28% of the surface
   const GOLDEN = Math.PI * (3 - Math.sqrt(5));
-  const contains = window.d3.geoContains;
+  const isLand = landMask(landFeature);
 
   const lats = [], lngs = [];
   for (let i = 0; i < cands; i++) {
     const y = 1 - (i / (cands - 1)) * 2;
     const lat = Math.asin(y) / DEG;
     const lng = ((i * GOLDEN) / DEG) % 360 - 180;
-    if (contains(landFeature, [lng, lat])) { lats.push(lat); lngs.push(lng); }
+    if (isLand(lat, lng)) { lats.push(lat); lngs.push(lng); }
   }
 
   // Reserve a slice of the field for island states the 110m atlas omits.

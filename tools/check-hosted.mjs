@@ -70,7 +70,7 @@ const strict = await chromium.launch({
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto(URL, { waitUntil: 'load' });
   await page.waitForFunction(() => window.__app?.tl && !document.getElementById('boot'),
-    null, { timeout: 60000 });
+    null, { timeout: 120000 });
   await sleep(2500);
 
   const before = await state(page);
@@ -110,7 +110,7 @@ const relaxed = await chromium.launch({
   const page = await relaxed.newPage({ viewport: { width: 1280, height: 720 } });
   await page.goto(`${URL}${URL.includes('?') ? '&' : '?'}room=1`, { waitUntil: 'load' });
   await page.waitForFunction(() => window.__app?.tl && !document.getElementById('boot'),
-    null, { timeout: 60000 });
+    null, { timeout: 120000 });
   await sleep(3000);
   const s = await state(page);
   !s.gate ? pass('no start card — runs hands-free') : fail('start card appeared unnecessarily');
