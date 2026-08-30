@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Office of the President of the General Assembly · 81st Session</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+
+<!-- WebGL: the particle system, the globe, the arcs.
+     The wrapper isolates the vignette's blend mode so it grades the canvas
+     only, and never darkens the typography layered above it. -->
+<div id="stagewrap">
+  <canvas id="stage"></canvas>
+  <div id="grade" aria-hidden="true"></div>
+</div>
+
+<!-- All typography lives in the DOM so it stays razor sharp on a projector.
+     Section order here must match SCENE_LIST in src/main.js. -->
+<div id="overlay">
+
+  <!-- 0 · Cold open -->
+  <section class="scene" data-scene="0">
+    <div class="titleblock center">
+      <div class="eyebrow reveal">United Nations</div>
+      <h1 class="reveal">Office of the President<br>of the General Assembly</h1>
+      <div class="rule reveal"></div>
+      <div class="session reveal">Eighty&#8209;first Session</div>
+    </div>
+  </section>
+
+  <!-- 1 · The President's theme for the session -->
+  <section class="scene" data-scene="1">
+    <div class="theme-block center">
+      <div class="eyebrow reveal">The Eighty&#8209;first Session</div>
+      <h2 class="theme-head reveal" id="themeHead"></h2>
+      <div class="rule reveal"></div>
+      <div class="theme-sub reveal" id="themeSub"></div>
+      <div class="theme-pga reveal" id="themePga"></div>
+    </div>
+  </section>
+
+  <!-- 2 · Welcome in many tongues -->
+  <section class="scene" data-scene="2">
+    <div class="welcome-stack center" id="welcomeStack"></div>
+    <div class="welcome-final center">
+      <h2 class="reveal">Welcome.</h2>
+    </div>
+  </section>
+
+  <!-- 3 · The headline numbers -->
+  <section class="scene" data-scene="3">
+    <div class="statrow center" id="statRow"></div>
+  </section>
+
+  <!-- 4 · The globe -->
+  <section class="scene" data-scene="4">
+    <div class="globe-caption">
+      <div class="country-ticker" id="countryTicker"></div>
+    </div>
+    <div class="globe-tally" id="globeTally"><span class="n">0</span><span class="l">nations</span></div>
+    <div class="globe-closing center" id="globeClosing">
+      <h2 class="reveal"><span id="closingCount">31</span> nations.<br>One Assembly.</h2>
+    </div>
+  </section>
+
+  <!-- 5 · Faces -->
+  <section class="scene" data-scene="5">
+    <div class="region-label" id="regionLabel"></div>
+    <div class="face-grid" id="faceGrid"></div>
+  </section>
+
+  <!-- 6 · Languages -->
+  <section class="scene" data-scene="6">
+    <div class="lang-cloud" id="langCloud"></div>
+    <div class="lang-resolve center" id="langResolve">
+      <div class="bignum" id="langCount">23</div>
+      <div class="bigcaption">languages</div>
+      <div class="lang-official" id="langOfficial"></div>
+    </div>
+  </section>
+
+  <!-- 7 · The President's six priorities -->
+  <section class="scene" data-scene="7">
+    <div class="pillars-head" id="pillarsHead">
+      <div class="eyebrow">Our priorities for the session</div>
+      <div class="pillars-theme" id="pillarsTheme"></div>
+    </div>
+    <div class="pillar-grid" id="pillarGrid"></div>
+  </section>
+
+  <!-- 8 · Composition -->
+  <section class="scene" data-scene="8">
+    <div class="comp-panel" data-panel="gender">
+      <div class="panel-title">Gender</div>
+      <div class="glyph-field" id="glyphField"></div>
+      <div class="split-legend" id="splitLegend"></div>
+    </div>
+    <div class="comp-panel" data-panel="contract">
+      <div class="panel-title">How we are funded</div>
+      <div class="flowbar" id="flowBar"></div>
+      <div class="flowbar-legend" id="flowLegend"></div>
+    </div>
+    <div class="comp-panel" data-panel="groups">
+      <div class="panel-title">United Nations regional groups</div>
+      <div class="group-bloom" id="groupBloom"></div>
+    </div>
+  </section>
+
+  <!-- 9 · Close -->
+  <section class="scene" data-scene="9">
+    <div class="titleblock center closing">
+      <div class="eyebrow reveal" id="closingTheme"></div>
+      <h1 class="reveal">Welcome to the Office<br>of the President of the<br>General Assembly</h1>
+      <div class="rule reveal"></div>
+      <div class="session reveal" id="closingLine"></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Progress hairline along the bottom edge. -->
+<div id="progress" aria-hidden="true"><span></span></div>
+
+<!-- Press D. Hidden by default. -->
+<div id="debug" hidden></div>
+
+<!-- Shown if WebGL is unavailable, so the room never sees a blank screen. -->
+<noscript><div id="fallback">This presentation requires JavaScript.</div></noscript>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/d3-array.min.js"></script>
+<script src="vendor/d3-geo.min.js"></script>
+<script src="vendor/topojson-client.min.js"></script>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

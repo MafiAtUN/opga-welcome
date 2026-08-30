@@ -1,0 +1,16 @@
+{
+  "name": "opga-welcome",
+  "version": "1.0.0",
+  "description": "OPGA 81st Session — opening presentation. No build step to present; see present.command.",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "playwright": "^1.62.1"
+  },
+  "scripts": {
+    "check": "node tools/check-playback.mjs",
+    "check:full": "node tools/check-playback.mjs --full",
+    "narrate": "node tools/narrate.mjs",
+    "figures": "node tools/narrate.mjs --check"
+  }
+}

@@ -1,0 +1,11 @@
+node_modules/
+.narration-build/
+.DS_Store
+~$*
+.deepeval/
+
+# Source documents the site does not need. The 80th-session PDF is 93MB and is
+# already public on un.org; the two .docx are internal working drafts. The data
+# transcribed from them lives in data/ and is committed.
+assets/*.pdf
+assets/*.docx

@@ -1,0 +1,655 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   OPGA 81 — Welcome
+   Design system. Palette sampled from assets/logo.png (UN blue #009FDB).
+   Everything sizes off --u so the whole deck scales with the projector.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: 'Inter';
+  src: url('../vendor/inter-latin.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: block;
+}
+
+:root {
+  /* Brand */
+  --blue:        #009FDB;   /* sampled from the PGA81 mark */
+  --blue-bright: #4FC8F5;
+  --blue-deep:   #003A5D;
+  --gold:        #F2B233;   /* reserved exclusively for ignition moments */
+  --space:       #00121F;
+  --space-2:     #001A2C;
+  --paper:       #F4F9FC;
+  --dim:         rgba(244, 249, 252, 0.46);
+  --dimmer:      rgba(244, 249, 252, 0.24);
+  --hair:        rgba(79, 200, 245, 0.28);
+
+  /* One unit drives every size in the deck. 1vw at 16:9 ≈ 19.2px at 1080p. */
+  --u: 1vw;
+
+  /* Non-Latin scripts fall back to the macOS system faces, which cover
+     Arabic, Bangla, CJK, Devanagari and Cyrillic without shipping Noto. */
+  --sans: 'Inter', -apple-system, 'Helvetica Neue', 'Segoe UI', system-ui, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--space);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  cursor: none;                     /* no mouse in this presentation */
+  font-variant-numeric: tabular-nums;
+}
+
+#stagewrap {
+  position: fixed; inset: 0; z-index: 1;
+  isolation: isolate;              /* confines #grade's blending to the canvas */
+}
+#stage { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* Vignette + a whisper of grain, so flat blacks don't band on a projector. */
+#grade {
+  position: absolute; inset: 0; pointer-events: none; z-index: 5;
+  background:
+    radial-gradient(ellipse 78% 72% at 50% 48%, transparent 42%, rgba(0,8,15,0.82) 100%);
+  mix-blend-mode: multiply;
+}
+#grade::after {
+  content: ''; position: absolute; inset: -50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+  opacity: 0.035; mix-blend-mode: overlay;
+  animation: grain 0.7s steps(3) infinite;
+}
+@keyframes grain {
+  0%   { transform: translate(0, 0); }
+  33%  { transform: translate(-2%, 1%); }
+  66%  { transform: translate(1%, -2%); }
+  100% { transform: translate(0, 0); }
+}
+
+#overlay { position: fixed; inset: 0; z-index: 10; pointer-events: none; }
+
+.scene {
+  position: absolute; inset: 0;
+  opacity: 0; visibility: hidden;
+  will-change: opacity, transform;
+}
+.scene.is-live { visibility: visible; }
+
+.center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+}
+
+/* ── Type scale ───────────────────────────────────────────────────────────── */
+
+.eyebrow {
+  font-size: calc(var(--u) * 0.95);
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--blue-bright);
+  margin-bottom: calc(var(--u) * 1.6);
+}
+
+h1 {
+  font-size: calc(var(--u) * 4.3);
+  font-weight: 200;
+  line-height: 1.14;
+  letter-spacing: -0.022em;
+}
+
+h2 {
+  font-size: calc(var(--u) * 5.2);
+  font-weight: 200;
+  line-height: 1.1;
+  letter-spacing: -0.026em;
+}
+
+.rule {
+  width: calc(var(--u) * 9);
+  height: 1px;
+  margin: calc(var(--u) * 2.2) 0;
+  background: linear-gradient(90deg, transparent, var(--blue), transparent);
+  transform-origin: center;
+}
+
+.session {
+  font-size: calc(var(--u) * 1.5);
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.titleblock.closing h1 { font-size: calc(var(--u) * 3.6); }
+
+/* ── 1 · Welcome in many tongues ──────────────────────────────────────────── */
+
+.welcome-stack { pointer-events: none; }
+.welcome-word {
+  position: absolute;
+  font-size: calc(var(--u) * 2.8);
+  font-weight: 250;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--paper);
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+.welcome-word .tag {
+  display: block;
+  font-size: calc(var(--u) * 0.72);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--blue-bright);
+  margin-top: calc(var(--u) * 0.5);
+  font-weight: 500;
+}
+.welcome-final h2 { font-size: calc(var(--u) * 7); font-weight: 200; }
+
+/* ── 2 · Headline numbers ─────────────────────────────────────────────────── */
+
+.statrow { flex-direction: row; gap: calc(var(--u) * 7); }
+.stat { display: flex; flex-direction: column; align-items: center; opacity: 0; }
+.stat .n {
+  font-size: calc(var(--u) * 9.5);
+  font-weight: 200;
+  line-height: 0.92;
+  letter-spacing: -0.05em;
+  color: var(--paper);
+}
+.stat .l {
+  margin-top: calc(var(--u) * 1.1);
+  font-size: calc(var(--u) * 1.05);
+  font-weight: 400;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--blue-bright);
+}
+
+/* ── 3 · Globe ────────────────────────────────────────────────────────────── */
+
+.globe-caption {
+  position: absolute;
+  left: calc(var(--u) * 6);
+  bottom: calc(var(--u) * 7.5);
+  min-height: calc(var(--u) * 8);
+}
+.country-ticker { position: relative; height: calc(var(--u) * 8); }
+.ticker-item {
+  position: absolute; left: 0; bottom: 0;
+  display: flex; align-items: center; gap: calc(var(--u) * 1.4);
+  white-space: nowrap; opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* The faces of the colleagues from this country, overlapped into a row. */
+.ticker-item .faces { display: flex; align-items: center; }
+.tface {
+  position: relative;
+  width: calc(var(--u) * 5.6); height: calc(var(--u) * 5.6);
+  border-radius: 50%;
+  margin-right: calc(var(--u) * -1.35);   /* overlap */
+  overflow: hidden; flex: 0 0 auto;
+  display: grid; place-items: center;
+  background: linear-gradient(145deg, var(--blue), var(--blue-deep));
+  box-shadow: 0 0 0 2px rgba(0,18,31,0.95),
+              0 0 0 3px rgba(242,178,51,0.75),
+              0 0 calc(var(--u) * 1.6) rgba(242,178,51,0.35);
+}
+.tface img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tface .mono {
+  font-size: calc(var(--u) * 1.9); font-weight: 400; color: var(--paper);
+}
+.tface.more {
+  background: rgba(0,58,93,0.9);
+  font-size: calc(var(--u) * 1.15); font-weight: 400; color: var(--blue-bright);
+}
+
+.ticker-item .txt { display: flex; flex-direction: column; gap: calc(var(--u) * 0.3); }
+.ticker-item .flag { font-size: calc(var(--u) * 2.1); margin-right: calc(var(--u) * 0.75); }
+.ticker-item .name {
+  font-size: calc(var(--u) * 2.5);
+  font-weight: 250;
+  letter-spacing: -0.012em;
+  line-height: 1.05;
+  display: flex; align-items: center;
+}
+.ticker-item .who {
+  font-size: calc(var(--u) * 0.92);
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.globe-tally {
+  position: absolute;
+  right: calc(var(--u) * 6);
+  bottom: calc(var(--u) * 9);
+  display: flex; align-items: baseline; gap: calc(var(--u) * 0.9);
+  opacity: 0;
+}
+.globe-tally .n {
+  font-size: calc(var(--u) * 5.4);
+  font-weight: 200;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+.globe-tally .l {
+  font-size: calc(var(--u) * 1);
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--blue-bright);
+}
+
+.globe-closing { opacity: 0; }
+.globe-closing h2 { font-size: calc(var(--u) * 5.6); }
+
+/* ── 4 · Faces ────────────────────────────────────────────────────────────── */
+
+.region-label {
+  position: absolute;
+  left: calc(var(--u) * 6);
+  top: calc(var(--u) * 7);
+  font-size: calc(var(--u) * 1.15);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--blue-bright);
+  opacity: 0;
+}
+
+.face-grid {
+  position: absolute;
+  left: calc(var(--u) * 6);
+  top: 0; bottom: 0;
+  width: calc(var(--u) * 46);
+}
+.region-cards {
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  display: flex; flex-wrap: wrap;
+  gap: calc(var(--u) * 1.5);
+  align-content: center;
+}
+
+.card {
+  display: flex; align-items: center;
+  gap: calc(var(--u) * 1.15);
+  padding: calc(var(--u) * 0.85) calc(var(--u) * 1.5) calc(var(--u) * 0.85) calc(var(--u) * 0.85);
+  border-radius: calc(var(--u) * 5);
+  background: linear-gradient(100deg, rgba(0,58,93,0.60), rgba(0,26,44,0.34));
+  border: 1px solid var(--hair);
+  backdrop-filter: blur(calc(var(--u) * 0.9));
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.card .portrait {
+  position: relative;
+  width: calc(var(--u) * 3.5); height: calc(var(--u) * 3.5);
+  border-radius: 50%;
+  flex: 0 0 auto;
+  overflow: hidden;
+  background: linear-gradient(145deg, var(--blue), var(--blue-deep));
+  display: grid; place-items: center;
+  box-shadow: 0 0 0 1px rgba(79,200,245,0.42), 0 0 calc(var(--u)*1.4) rgba(0,159,219,0.34);
+}
+.card .portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card .portrait .mono {
+  font-size: calc(var(--u) * 1.3);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--paper);
+}
+.card .meta { display: flex; flex-direction: column; gap: calc(var(--u) * 0.16); min-width: 0; }
+.card .nm {
+  font-size: calc(var(--u) * 1.12);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+.card .rl {
+  font-size: calc(var(--u) * 0.78);
+  font-weight: 300;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+}
+.card .fl { margin-left: auto; font-size: calc(var(--u) * 1.3); padding-left: calc(var(--u)*0.7); }
+
+/* ── 5 · Languages ────────────────────────────────────────────────────────── */
+
+.lang-cloud { position: absolute; inset: 0; }
+.lang-word {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform-origin: center;
+  white-space: nowrap;
+  font-weight: 250;
+  color: var(--paper);
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+.lang-word.is-official { color: var(--gold); font-weight: 350; }
+.lang-word .cnt {
+  font-size: 0.42em;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--blue-bright);
+  margin-left: 0.7em;
+  vertical-align: super;
+}
+.lang-word.is-official .cnt { color: var(--gold); opacity: 0.7; }
+
+.lang-resolve { opacity: 0; }
+.bignum {
+  font-size: calc(var(--u) * 14);
+  font-weight: 200;
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+}
+.bigcaption {
+  margin-top: calc(var(--u) * 1.2);
+  font-size: calc(var(--u) * 1.5);
+  font-weight: 400;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--blue-bright);
+}
+.lang-official {
+  margin-top: calc(var(--u) * 3);
+  font-size: calc(var(--u) * 1.35);
+  font-weight: 250;
+  line-height: 1.6;
+  color: var(--dim);
+  max-width: calc(var(--u) * 58);
+}
+.lang-official b { color: var(--gold); font-weight: 400; }
+
+/* ── 6 · Composition ──────────────────────────────────────────────────────── */
+
+.comp-panel { position: absolute; opacity: 0; }
+.comp-panel[data-panel="gender"]   { left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc(var(--u)*54); }
+.comp-panel[data-panel="contract"] { left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc(var(--u)*62); }
+.comp-panel[data-panel="groups"]   { left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc(var(--u)*62); }
+
+.panel-title {
+  font-size: calc(var(--u) * 1.05);
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--blue-bright);
+  text-align: center;
+  margin-bottom: calc(var(--u) * 3);
+}
+
+.glyph-field {
+  display: flex; flex-wrap: wrap;
+  justify-content: center;
+  gap: calc(var(--u) * 0.75);
+  margin-bottom: calc(var(--u) * 3);
+}
+.glyph { width: calc(var(--u) * 1.5); height: calc(var(--u) * 3.4); opacity: 0; will-change: transform, opacity; }
+.glyph svg { width: 100%; height: 100%; display: block; }
+
+.split-legend { display: flex; justify-content: center; gap: calc(var(--u) * 6); }
+.split-legend .item { text-align: center; }
+.split-legend .pct { font-size: calc(var(--u) * 3.6); font-weight: 200; letter-spacing: -0.03em; line-height: 1; }
+.split-legend .lbl {
+  margin-top: calc(var(--u) * 0.7);
+  font-size: calc(var(--u) * 0.92);
+  font-weight: 400; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--dim);
+}
+.split-legend .item.f .pct { color: var(--gold); }
+.split-legend .item.m .pct { color: var(--blue-bright); }
+
+.flowbar {
+  display: flex; height: calc(var(--u) * 5.4);
+  border-radius: calc(var(--u) * 0.5);
+  overflow: hidden;
+  margin-bottom: calc(var(--u) * 2.4);
+}
+.flowbar .seg {
+  position: relative;
+  width: 0;
+  display: grid; place-items: center;
+  will-change: width;
+}
+.flowbar .seg .segn {
+  font-size: calc(var(--u) * 1.5); font-weight: 400;
+  color: var(--space); mix-blend-mode: normal; opacity: 0;
+}
+.flowbar-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--u) * 2.4); }
+.flowbar-legend .li { display: flex; align-items: center; gap: calc(var(--u) * 0.6); opacity: 0; }
+.flowbar-legend .sw { width: calc(var(--u)*0.72); height: calc(var(--u)*0.72); border-radius: 2px; }
+.flowbar-legend .lt {
+  font-size: calc(var(--u) * 0.95); font-weight: 300;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim);
+}
+
+/* Top-aligned: label wrapping varies, and flex-end would stagger the rings. */
+.group-bloom { display: flex; justify-content: center; gap: calc(var(--u) * 3.4); align-items: flex-start; }
+.group-bloom .gb { text-align: center; opacity: 0; }
+.group-bloom .ring {
+  position: relative;
+  width: calc(var(--u) * 9); height: calc(var(--u) * 9);
+  margin: 0 auto calc(var(--u) * 1.1);
+}
+.group-bloom .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.group-bloom .ring .rn {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-size: calc(var(--u) * 2.4); font-weight: 250; letter-spacing: -0.02em;
+}
+.group-bloom .gname {
+  font-size: calc(var(--u) * 0.82); font-weight: 400;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(244, 249, 252, 0.66);
+  max-width: calc(var(--u) * 11); margin: 0 auto; line-height: 1.5;
+}
+
+/* ── Chrome ───────────────────────────────────────────────────────────────── */
+
+#progress {
+  position: fixed; left: 0; right: 0; bottom: 0; height: 2px;
+  background: rgba(79,200,245,0.10); z-index: 20;
+}
+#progress span {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--blue-deep), var(--blue), var(--blue-bright));
+  box-shadow: 0 0 calc(var(--u)*0.7) rgba(0,159,219,0.7);
+}
+
+#debug {
+  position: fixed; left: 12px; top: 12px; z-index: 30;
+  font: 11px/1.6 ui-monospace, Menlo, monospace;
+  color: var(--blue-bright);
+  background: rgba(0,18,31,0.85);
+  border: 1px solid var(--hair);
+  padding: 8px 12px; border-radius: 6px;
+  white-space: pre;
+}
+#debug[hidden] { display: none; }
+
+/* Only ever seen if the browser blocked audio autoplay — i.e. not when
+   present.command launched it, which passes the flag that allows it. */
+#audiohint {
+  position: fixed; left: 50%; bottom: calc(var(--u) * 2.2); transform: translateX(-50%);
+  z-index: 30;
+  font-size: calc(var(--u) * 0.62); letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--dim);
+  background: rgba(0,18,31,0.7);
+  border: 1px solid var(--hair);
+  padding: calc(var(--u) * 0.4) calc(var(--u) * 1.1); border-radius: 999px;
+}
+#audiohint[hidden] { display: none; }
+
+#fallback, #boot {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  font-size: calc(var(--u) * 1.2); letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--dim); z-index: 40; background: var(--space);
+}
+
+/* The reveal primitive: scenes animate these in via GSAP. */
+.reveal { opacity: 0; will-change: transform, opacity; }
+
+@media (prefers-reduced-motion: reduce) {
+  #grade::after { animation: none; }
+}
+
+
+/* ── 1 · The President's theme ─────────────────────────────────────────────── */
+
+.theme-block { padding: 0 calc(var(--u) * 10); }
+.theme-head {
+  font-size: calc(var(--u) * 5);
+  font-weight: 200;
+  line-height: 1.1;
+  letter-spacing: -0.028em;
+  max-width: calc(var(--u) * 68);
+}
+.theme-sub {
+  font-size: calc(var(--u) * 2.3);
+  font-weight: 250;
+  letter-spacing: -0.005em;
+  color: var(--blue-bright);
+}
+.theme-pga {
+  margin-top: calc(var(--u) * 3.2);
+  font-size: calc(var(--u) * 1.02);
+  font-weight: 400;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--dim);
+  line-height: 2;
+}
+.theme-pga b { display: block; color: var(--paper); font-weight: 500; }
+
+/* ── 7 · The six priorities ────────────────────────────────────────────────── */
+
+.pillars-head {
+  position: absolute;
+  top: calc(var(--u) * 7); left: 0; right: 0;
+  text-align: center;
+  opacity: 0;
+}
+.pillars-head .eyebrow { margin-bottom: calc(var(--u) * 0.9); }
+.pillars-theme {
+  font-size: calc(var(--u) * 2.1);
+  font-weight: 200;
+  letter-spacing: -0.018em;
+  color: var(--paper);
+}
+
+.pillar-grid {
+  position: absolute;
+  left: 50%; top: 54%;
+  transform: translate(-50%, -50%);
+  width: calc(var(--u) * 82);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: calc(var(--u) * 1.6);
+}
+.pillar {
+  position: relative;
+  padding: calc(var(--u) * 1.9) calc(var(--u) * 2) calc(var(--u) * 2);
+  border-radius: calc(var(--u) * 0.9);
+  background: linear-gradient(150deg, rgba(0,58,93,0.52), rgba(0,26,44,0.30));
+  border: 1px solid var(--hair);
+  border-top: 2px solid rgba(242,178,51,0.55);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.pillar .pnum {
+  font-size: calc(var(--u) * 1.15);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--gold);
+  margin-bottom: calc(var(--u) * 0.9);
+}
+.pillar .ptitle {
+  font-size: calc(var(--u) * 1.62);
+  font-weight: 300;
+  line-height: 1.24;
+  letter-spacing: -0.012em;
+  margin-bottom: calc(var(--u) * 0.9);
+  min-height: calc(var(--u) * 4);
+}
+.pillar .pfocus {
+  font-size: calc(var(--u) * 0.95);
+  font-weight: 300;
+  line-height: 1.55;
+  letter-spacing: 0.055em;
+  color: var(--dim);
+}
+
+
+/* The closing card echoes the session theme; it needs its own, calmer setting
+   than the all-caps tracked eyebrow used elsewhere. */
+.titleblock.closing .eyebrow {
+  font-size: calc(var(--u) * 1.35);
+  font-weight: 250;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--blue-bright);
+  margin-bottom: calc(var(--u) * 2.2);
+}
+
+
+/* ── The start card ────────────────────────────────────────────────────────
+   Only ever seen where the browser will not make sound unprompted — a hosted
+   copy, or anything not launched by present.command. It exists so the picture
+   and the voice begin on the same click. */
+
+#startgate {
+  position: fixed; inset: 0; z-index: 50;
+  display: grid; place-items: center;
+  background: radial-gradient(ellipse 70% 70% at 50% 45%, #002034 0%, var(--space) 70%);
+  cursor: pointer;
+  transition: opacity 0.6s ease;
+}
+#startgate.is-going { opacity: 0; pointer-events: none; }
+#startgate .sg-inner { text-align: center; padding: 0 6vw; }
+#startgate .sg-eyebrow {
+  font-size: calc(var(--u) * 0.92); font-weight: 500;
+  letter-spacing: 0.4em; text-transform: uppercase;
+  color: var(--blue-bright); margin-bottom: calc(var(--u) * 1.4);
+}
+#startgate .sg-title {
+  font-size: calc(var(--u) * 3.4); font-weight: 200;
+  letter-spacing: -0.02em; margin-bottom: calc(var(--u) * 3.4);
+}
+#startgate .sg-cta {
+  display: inline-block;
+  font-size: calc(var(--u) * 1.15); font-weight: 400;
+  letter-spacing: 0.34em; text-transform: uppercase;
+  color: var(--paper);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: calc(var(--u) * 0.95) calc(var(--u) * 2.6);
+  animation: sgpulse 2.6s ease-in-out infinite;
+}
+#startgate .sg-note {
+  margin-top: calc(var(--u) * 1.6);
+  font-size: calc(var(--u) * 0.82); font-weight: 300;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim);
+}
+@keyframes sgpulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,159,219,0.0); border-color: var(--hair); }
+  50%      { box-shadow: 0 0 calc(var(--u)*2.2) 0 rgba(0,159,219,0.35); border-color: var(--blue); }
+}
+@media (prefers-reduced-motion: reduce) { #startgate .sg-cta { animation: none; } }

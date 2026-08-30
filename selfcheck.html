@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OPGA 81 — self check</title>
+<style>
+  body { background:#00121F; color:#F4F9FC; font:14px/1.7 ui-monospace,Menlo,monospace; padding:40px; }
+  h1 { font:300 24px/1.3 -apple-system,system-ui,sans-serif; margin-bottom:6px; }
+  p.lede { font:400 14px/1.6 -apple-system,system-ui,sans-serif; color:rgba(244,249,252,.55); margin-bottom:28px; max-width:70ch; }
+  pre { background:#001A2C; border:1px solid rgba(79,200,245,.2); border-radius:8px; padding:20px; white-space:pre-wrap; }
+  .ok   { color:#5AD2FF; }
+  .bad  { color:#FF6B5A; }
+  iframe { position:fixed; left:-3000px; width:1280px; height:720px; border:0; }
+</style>
+</head>
+<body>
+<h1>Self check</h1>
+<p class="lede">
+  Steps the whole timeline frame by frame and reports anything broken. Run this
+  after editing <code>data/staff.js</code> to confirm the presentation still
+  plays clean. Takes a few seconds.
+</p>
+<pre id="log">running…</pre>
+<iframe id="frame" title="presentation under test" src="index.html"></iframe>
+
+<script>
+const out = document.getElementById('log');
+const lines = [];
+const say = (m, cls) => {
+  lines.push(cls ? `<span class="${cls}">${m}</span>` : m);
+  out.innerHTML = lines.join('\n');
+};
+
+document.getElementById('frame').onload = () => {
+  const w = document.getElementById('frame').contentWindow;
+  let tries = 0;
+  const wait = setInterval(() => {
+    if (++tries > 100) { clearInterval(wait); say('FAILED — the presentation never finished loading', 'bad'); return; }
+    const app = w.__app;
+    if (!app || !app.tl) return;
+    clearInterval(wait);
+    run(w, app);
+  }, 100);
+};
+
+function run(w, app) {
+  const tl = app.tl, dur = tl.duration();
+  const mmss = (v) => `${Math.floor(v / 60)}:${String(Math.round(v % 60)).padStart(2, '0')}`;
+  say(`runtime          ${dur.toFixed(2)}s  (${mmss(dur)})`);
+
+  // Step every frame. Each tween and callback renders at least once.
+  let errors = 0, first = null;
+  const STEP = 0.2;
+  for (let t = 0; t <= dur; t += STEP) {
+    try {
+      tl.seek(t, false);
+      app.field.update(t);
+      app.cloud.update(t * 0.1);
+      app.globeGroup.rotation.x = app.aim.x;
+      app.globeGroup.rotation.y = app.aim.y;
+      app.renderer.render(app.scene, app.camera);
+    } catch (e) {
+      errors++;
+      if (!first) first = `t=${t.toFixed(1)}s — ${e.message}`;
+    }
+  }
+  say(`frames stepped   ${Math.round(dur / STEP)}`);
+  say(`runtime errors   ${errors}${first ? `  first: ${first}` : ''}`, errors ? 'bad' : 'ok');
+
+  // A NaN anywhere makes geometry silently vanish — worth checking explicitly.
+  const bad = [];
+  const chk = (n, v) => { if (!Number.isFinite(v)) bad.push(`${n}=${v}`); };
+  chk('aim.x', app.aim.x); chk('aim.y', app.aim.y);
+  for (const [k, u] of Object.entries(app.field.uniforms)) {
+    if (typeof u.value === 'number') chk(k, u.value);
+  }
+  say(`non-finite values ${bad.length ? bad.join(', ') : 'none'}`, bad.length ? 'bad' : 'ok');
+
+  // Every scene should actually be on screen during its slot.
+  say('');
+  const scenes = w.document.querySelectorAll('.scene');
+  let hidden = 0;
+  app.__scenes.forEach((s, i) => {
+    tl.seek(s.at + Math.min(3, s.dur / 2), false);
+    const cs = w.getComputedStyle(scenes[i]);
+    const visible = cs.visibility === 'visible' && parseFloat(cs.opacity) > 0.05;
+    if (!visible) hidden++;
+    say(`scene ${i}  ${s.name.padEnd(13)} ${mmss(s.at).padStart(5)}  ${visible ? 'visible' : 'NOT VISIBLE'}`,
+        visible ? null : 'bad');
+  });
+
+  say('');
+  const good = errors === 0 && bad.length === 0 && hidden === 0;
+  say(good ? 'ALL CLEAR — ready to present.'
+           : 'PROBLEMS FOUND — see the red lines above.', good ? 'ok' : 'bad');
+  tl.seek(0, false);
+}
+</script>
+</body>
+</html>

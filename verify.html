@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OPGA 81 — Data check</title>
+<style>
+  :root {
+    --blue: #009FDB; --bright: #4FC8F5; --gold: #F2B233;
+    --space: #00121F; --panel: #001A2C; --paper: #F4F9FC;
+    --dim: rgba(244,249,252,.55); --hair: rgba(79,200,245,.20);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--space); color: var(--paper);
+    font: 15px/1.6 -apple-system, 'Helvetica Neue', system-ui, sans-serif;
+    padding: 48px 40px 120px; max-width: 1180px; margin: 0 auto;
+  }
+  h1 { font-size: 30px; font-weight: 300; letter-spacing: -.02em; }
+  h2 {
+    font-size: 12px; font-weight: 600; letter-spacing: .28em; text-transform: uppercase;
+    color: var(--bright); margin: 48px 0 16px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--hair);
+  }
+  .lede { color: var(--dim); margin-top: 10px; max-width: 70ch; }
+  .lede b { color: var(--gold); font-weight: 600; }
+  code {
+    font: 13px ui-monospace, Menlo, monospace;
+    background: rgba(79,200,245,.10); padding: 1px 6px; border-radius: 4px;
+  }
+
+  .cards { display: grid; gap: 12px; }
+  .row {
+    background: var(--panel); border: 1px solid var(--hair);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px; padding: 14px 18px;
+  }
+  .row.ok { border-left-color: rgba(79,200,245,.35); }
+  .row.blocked { border-left-color: #FF6B5A; }
+  .nm { font-weight: 500; }
+  .nm .team { color: var(--dim); font-weight: 400; font-size: 13px; margin-left: 10px; }
+  .note { color: var(--gold); font-size: 13.5px; margin-top: 6px; }
+  .row.blocked .note { color: #FF9B8E; }
+  .fields { color: var(--dim); font-size: 13px; margin-top: 6px; }
+  .fields span { margin-right: 16px; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th, td { text-align: left; padding: 7px 12px 7px 0; border-bottom: 1px solid rgba(79,200,245,.10); }
+  th { color: var(--bright); font-weight: 500; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
+  td.num { text-align: right; padding-right: 24px; font-variant-numeric: tabular-nums; }
+  tr.unver td:first-child::after { content: ' ●'; color: var(--gold); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 14px; }
+  .pc { text-align: center; }
+  .pc .av {
+    width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 8px;
+    overflow: hidden; display: grid; place-items: center;
+    background: linear-gradient(145deg, #009FDB, #003A5D);
+    box-shadow: 0 0 0 2px rgba(79,200,245,.35);
+  }
+  .pc .av img { width: 100%; height: 100%; object-fit: cover; }
+  .pc .av span { font-size: 26px; font-weight: 300; }
+  .pc .pn { font-size: 12.5px; line-height: 1.35; }
+  .pc .tag { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; margin-top: 3px; }
+  .pc .tag.src80 { color: var(--gold); }
+  .pc .tag.own  { color: var(--bright); }
+  .pc .tag.none { color: rgba(244,249,252,.3); }
+
+  .stats { display: flex; flex-wrap: wrap; gap: 40px; }
+  .stat .n { font-size: 40px; font-weight: 200; letter-spacing: -.03em; line-height: 1; }
+  .stat .l { font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--bright); margin-top: 8px; }
+  .bars { display: grid; gap: 6px; max-width: 620px; }
+  .bar { display: grid; grid-template-columns: 200px 1fr 40px; align-items: center; gap: 12px; font-size: 13.5px; }
+  .bar .t { color: var(--dim); }
+  .bar .b { height: 8px; border-radius: 4px; background: var(--blue); }
+  .bar .v { text-align: right; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<h1>OPGA 81 — data check</h1>
+<p class="lede" id="lede"></p>
+
+<h2>Needs your confirmation</h2>
+<p class="lede" style="margin-bottom:18px">
+  Each row below has at least one field I inferred rather than read from the directory.
+  Correct them in <code>data/staff.js</code> — every number in the presentation is
+  derived from that file, so fixing a row here updates the globe, the counts,
+  the language cloud and the charts together.
+</p>
+<div class="cards" id="unverified"></div>
+
+<h2>Photo check <span id="photoCount" style="color:var(--dim);font-weight:400"></span></h2>
+<p class="lede" style="margin-bottom:18px">
+  Portraits marked <b>80th</b> were taken from the 80th-session cabinet page and
+  matched <i>by name only</i>. Please confirm each is the right person and still
+  current — a colleague may have changed, or two people may share a name.
+  Anyone with no photo shows an initials monogram in the presentation, which is
+  a deliberate fallback, not a fault.
+</p>
+<div class="grid" id="photos"></div>
+
+<h2>Languages added by inference</h2>
+<p class="lede" style="margin-bottom:18px">
+  These languages were not in the directory. They were added because they are the
+  principal language of the person's nationality — which is a claim about a named
+  colleague who will probably be in the room. Worth a quick word with each of them
+  before the meeting, or delete the entry from their <code>languages</code> array.
+</p>
+<div class="cards" id="inferredLangs"></div>
+
+<h2>What the presentation will say</h2>
+<div class="stats" id="stats"></div>
+
+<h2>Languages</h2>
+<p class="lede" id="officialNote" style="margin-bottom:18px"></p>
+<div class="bars" id="langs"></div>
+
+<h2>Nationalities <span id="ccount" style="color:var(--dim);font-weight:400"></span></h2>
+<div class="bars" id="countries"></div>
+
+<h2>Full roster</h2>
+<table id="roster">
+  <thead><tr>
+    <th>Name</th><th>Title</th><th>Team</th><th>Country</th>
+    <th>Grade</th><th>Contract</th><th>Languages</th>
+  </tr></thead>
+  <tbody></tbody>
+</table>
+
+<script type="module">
+import { STAFF } from './data/staff.js';
+import * as D from './src/derive.js';
+import { COUNTRIES } from './data/countries.js';
+
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? '—').replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
+
+$('#lede').innerHTML =
+  `Transcribed from the 18 August directory: <b>${STAFF.length} entries</b>, of which ` +
+  `<b>${D.people.length}</b> are counted (vacant posts excluded) and ` +
+  `<b>${D.unverified.length}</b> still need checking. ` +
+  `Note the directory's own tally reads <b>Male 13 / Female 21 = 34</b>, which does not ` +
+  `match the ${STAFF.length} rows in its tables — one of the two is out of date.`;
+
+// ── Rows needing confirmation
+$('#unverified').innerHTML = D.unverified.map((p) => {
+  const blocked = !p.country || !p.name;
+  return `<div class="row ${blocked ? 'blocked' : ''}">
+    <div class="nm">${esc(p.name || '(no name in the directory)')}
+      <span class="team">${esc(p.team)}</span></div>
+    <div class="fields">
+      <span>country <b>${esc(p.country)}</b></span>
+      <span>gender <b>${esc(p.gender)}</b></span>
+      <span>languages <b>${esc((p.languages || []).join(', ') || '—')}</b></span>
+    </div>
+    <div class="note">${esc(p.note || 'Needs review.')}</div>
+  </div>`;
+}).join('');
+
+// ── Photo check. Portraits sourced from the 80th-session cabinet page are
+//    flagged, because they were matched by name and may not be current.
+const FROM_80TH = new Set(['eleid','stone','resolus','benziane','tshabalala',
+  'ishizaki','havn','alruqaishi','lyons','bois','misra','dalci','mercer']);
+
+// `photo` is the filename we *expect*, not proof the file is there — the
+// presentation falls back to a monogram when one is missing. So count what
+// actually loads rather than what is declared.
+let loaded = 0, settled = 0;
+const tally = () => {
+  $('#photoCount').textContent =
+    `— ${loaded} of ${D.named.length} colleagues have a portrait` +
+    (settled < D.named.length ? ' (checking…)' : '');
+};
+tally();
+
+$('#photos').innerHTML = D.named.map((p) => {
+  const ini = (p.name || '').replace(/^(Mr\.|Ms\.|Mrs\.|Dr\.)\s*/i, '').trim()
+    .split(/\s+/).filter(Boolean);
+  const mono = ((ini[0]?.[0] || '') + (ini.length > 1 ? ini.at(-1)[0] : '')).toUpperCase();
+  const tag = FROM_80TH.has(p.id) ? '<div class="tag src80">80th — confirm</div>'
+                                  : '<div class="tag own">supplied</div>';
+  return `<div class="pc" data-id="${p.id}">
+    <div class="av"><span>${mono}</span></div>
+    <div class="pn">${esc(p.name)}</div>
+    ${p.photo ? tag : '<div class="tag none">no photo</div>'}
+  </div>`;
+}).join('');
+
+// Load each portrait and only swap it in if it really arrives.
+for (const p of D.named) {
+  const cell = document.querySelector(`.pc[data-id="${p.id}"]`);
+  if (!p.photo) { settled++; tally(); continue; }
+  const img = new Image();
+  img.alt = '';
+  img.onload = () => {
+    cell.querySelector('.av').innerHTML = '';
+    cell.querySelector('.av').appendChild(img);
+    loaded++; settled++; tally();
+  };
+  img.onerror = () => {
+    cell.querySelector('.tag').className = 'tag none';
+    cell.querySelector('.tag').textContent = 'file missing';
+    settled++; tally();
+  };
+  img.src = `assets/photos/${p.photo}`;
+}
+
+// ── Languages we added rather than read
+$('#inferredLangs').innerHTML = D.inferredLanguages.length
+  ? D.inferredLanguages.map((r) => `<div class="row">
+      <div class="nm">${esc(r.name || '(unnamed)')}
+        <span class="team">${COUNTRIES[r.country]?.flag || ''} ${esc(r.country)}</span></div>
+      <div class="note">added: <b>${esc(r.added.join(', '))}</b></div>
+    </div>`).join('')
+  : '<div class="row ok"><div class="nm">None — every language shown is stated in '
+    + '<code>data/staff.js</code>.</div></div>';
+
+// ── Headline numbers
+$('#stats').innerHTML = [
+  [D.STATS.people, 'colleagues'],
+  [D.STATS.teams, 'teams'],
+  [D.STATS.countries, 'nationalities'],
+  [D.STATS.languages, 'languages'],
+  [D.STATS.regionalGroups, 'regional groups'],
+  [`${Math.round((D.genderSplit.F / D.people.length) * 100)}%`, 'women'],
+].map(([n, l]) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+
+// ── Language breakdown
+const { present, missing, all } = D.officialLanguages;
+$('#officialNote').innerHTML = all
+  ? 'All six official languages of the United Nations are spoken in this office.'
+  : `Of the six official UN languages, <b>${present.length}</b> are spoken here ` +
+    `(${present.join(', ')}). Missing: <b>${missing.join(', ')}</b> — note the directory's ` +
+    `trailing line mentions Russia among incoming secondments, which would complete the set.`;
+
+const maxLang = Math.max(...[...D.byLanguage.values()].map((v) => v.length));
+$('#langs').innerHTML = [...D.byLanguage].map(([lang, ppl]) => `
+  <div class="bar">
+    <div class="t">${esc(lang)}</div>
+    <div><div class="b" style="width:${(ppl.length / maxLang) * 100}%${
+      D.officialLanguages.present.includes(lang) ? ';background:var(--gold)' : ''}"></div></div>
+    <div class="v">${ppl.length}</div>
+  </div>`).join('');
+
+// ── Countries
+const byC = [...D.byCountry].sort((a, b) => b[1].length - a[1].length);
+$('#ccount').textContent = `— ${byC.length}`;
+const maxC = Math.max(...byC.map(([, v]) => v.length));
+$('#countries').innerHTML = byC.map(([c, ppl]) => `
+  <div class="bar">
+    <div class="t">${COUNTRIES[c]?.flag || ''} ${esc(c)}</div>
+    <div><div class="b" style="width:${(ppl.length / maxC) * 100}%"></div></div>
+    <div class="v">${ppl.length}</div>
+  </div>`).join('');
+
+// ── Full roster
+$('#roster tbody').innerHTML = STAFF.map((p) => `
+  <tr class="${p.verified === false ? 'unver' : ''}">
+    <td>${esc(p.name || '(unnamed)')}</td>
+    <td>${esc(p.title)}</td>
+    <td>${esc(p.team)}</td>
+    <td>${COUNTRIES[p.country]?.flag || ''} ${esc(p.country)}</td>
+    <td>${esc(p.grade)}</td>
+    <td>${esc(p.contract)}</td>
+    <td>${esc((p.languages || []).join(', ') || '—')}</td>
+  </tr>`).join('');
+</script>
+</body>
+</html>

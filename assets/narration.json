@@ -1,0 +1,234 @@
+{
+  "voice": "en-US-AvaMultilingualNeural",
+  "prosody": {
+    "rate": "-7%",
+    "pitch": "0%"
+  },
+  "timeline": 293,
+  "track": 301.66,
+  "renderedAt": "2026-08-30T16:16:09.613Z",
+  "cues": [
+    {
+      "at": 5.6,
+      "dur": 9.31,
+      "text": "Eighty years ago, in San Francisco, fifty nations signed a charter that opened with three words. We the peoples.",
+      "note": "the field is still finding its shape; nothing on screen yet but dust"
+    },
+    {
+      "at": 17,
+      "dur": 3.99,
+      "text": "Everything since has been an argument about whether we meant them.",
+      "note": "lands under the title block, before it lifts away"
+    },
+    {
+      "at": 23.4,
+      "dur": 7.01,
+      "text": "Every President of the General Assembly chooses a theme. It is not a slogan. It is a job description.",
+      "note": "the theme headline is resolving; frame it before it is read"
+    },
+    {
+      "at": 32.2,
+      "dur": 7.29,
+      "text": "Restoring trust. Managing transformation. A United Nations that delivers for all.",
+      "note": "headline and subline together, over the President’s name card"
+    },
+    {
+      "at": 40.2,
+      "dur": 4.52,
+      "text": "An office like this one is built from nothing, in a matter of weeks.",
+      "note": "the logo dissolves; the ring of scripts begins to arrive"
+    },
+    {
+      "at": 45.3,
+      "dur": 6.51,
+      "text": "Strangers arrive from thirty-one countries and are asked, immediately, to work as one.",
+      "note": "the words are cycling through the office’s own languages"
+    },
+    {
+      "at": 52.3,
+      "dur": 3.82,
+      "text": "So we start where the Assembly starts. With welcome.",
+      "note": "the words bloom together and hand over"
+    },
+    {
+      "at": 57.9,
+      "dur": 4.65,
+      "text": "Nine teams — and not one of them can finish a day’s work without another.",
+      "note": "the second counter"
+    },
+    {
+      "at": 63.4,
+      "dur": 2.57,
+      "text": "And thirty-one places we call home.",
+      "note": "the third counter, handing off to the globe"
+    },
+    {
+      "at": 67.6,
+      "dur": 2.72,
+      "text": "This is where the people in this room come from.",
+      "note": "the nebula folds into the Earth"
+    },
+    {
+      "at": 73.4,
+      "dur": 7.27,
+      "text": "Not an abstraction. A childhood. A first language. A reason someone came into this work.",
+      "note": "ignition begins — Canada first, then west to east"
+    },
+    {
+      "at": 84,
+      "dur": 6.21,
+      "text": "Some of us come from countries that have sent hundreds of thousands of peacekeepers into other people’s wars.",
+      "note": "the Americas and West Africa are alight"
+    },
+    {
+      "at": 94,
+      "dur": 7.39,
+      "text": "Some from islands so small the atlas leaves them out — and whose coastline is a running argument with the sea.",
+      "note": "literally true of this build: three of our nations need dots drawn by hand"
+    },
+    {
+      "at": 105,
+      "dur": 4.69,
+      "text": "Some from countries sheltering more than a million people who could not go home.",
+      "note": "South Asia is lighting up"
+    },
+    {
+      "at": 114,
+      "dur": 5.86,
+      "text": "Every one of them sends a line back to New York. Not one of us arrived here by accident.",
+      "note": "the arcs are the point of the scene"
+    },
+    {
+      "at": 124,
+      "dur": 4.76,
+      "text": "Whatever the Assembly argues about this year, someone in this room has lived it.",
+      "note": "the last countries ignite; the camera starts to pull back"
+    },
+    {
+      "at": 133.4,
+      "dur": 3.35,
+      "text": "Thirty-one nations. One Assembly.",
+      "note": "the closing card appears at 133"
+    },
+    {
+      "at": 143,
+      "dur": 3.99,
+      "text": "Now the harder thing to put on a map. The people.",
+      "note": "the globe slides right; the first cards come in"
+    },
+    {
+      "at": 149.6,
+      "dur": 5.78,
+      "text": "Some of you have served several sessions and know exactly what late September will feel like.",
+      "note": "over the middle of the region sweep"
+    },
+    {
+      "at": 158,
+      "dur": 4.72,
+      "text": "Some of you started this month and are still learning where the good coffee is.",
+      "note": "the room should smile here"
+    },
+    {
+      "at": 166.4,
+      "dur": 4.03,
+      "text": "By next September, nobody will remember which was which.",
+      "note": "the sweep is nearing its last regions"
+    },
+    {
+      "at": 174,
+      "dur": 10.39,
+      "text": "Because this is not a delegation. There is no flag to defend at this desk — only a hundred and ninety-three Member States who have to be able to trust us equally.",
+      "note": "the President’s own commitment: everyone’s President, without fear or favour"
+    },
+    {
+      "at": 187.6,
+      "dur": 9.85,
+      "text": "Multilingualism is not decoration here. It sits in the President’s mandate, next to gender parity, geographic balance and accessibility.",
+      "note": "the word cloud rises out of the dust"
+    },
+    {
+      "at": 198.4,
+      "dur": 5.36,
+      "text": "It is the difference between a delegation being heard and a delegation being handled.",
+      "note": "the cloud is at its fullest"
+    },
+    {
+      "at": 206.2,
+      "dur": 2.88,
+      "text": "Twenty-three languages, in one office.",
+      "note": "the number resolves at 205.6"
+    },
+    {
+      "at": 209.7,
+      "dur": 5.12,
+      "text": "Five of the six official languages of the United Nations are already in this room.",
+      "note": "the on-screen line names them; the voice does not repeat the list"
+    },
+    {
+      "at": 215.8,
+      "dur": 3.23,
+      "text": "Six pillars. This is the actual work.",
+      "note": "the first cards are landing"
+    },
+    {
+      "at": 220.2,
+      "dur": 7.22,
+      "text": "Peace that is prevented rather than ended. Development that reaches the countries everyone else forgets.",
+      "note": "pillars I and II, as all six settle into place"
+    },
+    {
+      "at": 229.4,
+      "dur": 7.56,
+      "text": "A planet we are holding in trust for people who are not born yet. Rights defended in the small places, close to home.",
+      "note": "pillars III and IV — Kofi Annan and Eleanor Roosevelt, both quoted in the vision statement"
+    },
+    {
+      "at": 237.4,
+      "dur": 6.95,
+      "text": "Technology governed rather than merely adopted. And an Assembly willing to reform itself.",
+      "note": "pillars V and VI, on the hold before the cards lift"
+    },
+    {
+      "at": 246.8,
+      "dur": 2.96,
+      "text": "Sixty-three per cent of this Office is women.",
+      "note": "the glyph field fills in"
+    },
+    {
+      "at": 250.6,
+      "dur": 5.69,
+      "text": "In a system still arguing about who belongs at the peace table, that is worth saying out loud.",
+      "note": "the legend appears at 248 — resolution 1325 is in the President’s first pillar"
+    },
+    {
+      "at": 258.2,
+      "dur": 6.92,
+      "text": "We are paid for in half a dozen different ways — secondments, consultancies, regular and extra-budgetary posts.",
+      "note": "the funding bar grows from 255.4"
+    },
+    {
+      "at": 265.8,
+      "dur": 9.4,
+      "text": "Different contracts. One standard. And four of the five regional groups are already here — we will be speaking for all five.",
+      "note": "the segments settle, then the regional bloom opens at 264.3 — Eastern Europe is the group we are missing"
+    },
+    {
+      "at": 275.8,
+      "dur": 7.19,
+      "text": "Hammarskjöld said this Organization was not built to bring us to heaven. It was built to save us from hell.",
+      "note": "the field is folding back into the mark"
+    },
+    {
+      "at": 285.2,
+      "dur": 5.5,
+      "text": "That is the work. Welcome to the Office of the President of the General Assembly.",
+      "note": "the closing title reveals from 279.8"
+    },
+    {
+      "at": 291.4,
+      "dur": 9.06,
+      "text": "Multilateralism is not only relevant. It is indispensable to a future of peace, dignity, and prosperity for all.",
+      "note": "the vision statement’s own last sentence, spoken over the held final card after the timeline has come to rest"
+    }
+  ]
+}
