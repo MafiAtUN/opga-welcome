@@ -327,3 +327,22 @@ export function buildPillars(host, pillars) {
     return n;
   });
 }
+
+
+// ── 1 · The President's career ──────────────────────────────────────────────
+
+/**
+ * One line per post, arriving in turn. The last is marked so the scene can
+ * hold on it — being elected to this chair is the point the list is making.
+ */
+export function buildCareer(host, entries) {
+  host.innerHTML = '';
+  return entries.map((e) => {
+    const n = el('div', 'pga-role' + (e.final ? ' is-final' : ''));
+    n.innerHTML = `<span class="dot"></span>` +
+      `<span class="rl">${e.label}</span>` +
+      (e.sub ? `<span class="rs">${e.sub}</span>` : '');
+    host.appendChild(n);
+    return n;
+  });
+}

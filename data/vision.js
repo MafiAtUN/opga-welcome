@@ -16,6 +16,56 @@ export const PGA = {
   show: true,
 };
 
+/**
+ * The President's career, shown one line at a time before the theme resolves.
+ *
+ * SOURCES — worth knowing which is which before this goes on a screen:
+ *   `src: 'vision'` is stated in Vision-Statement-Bangaldesh-PGA81.docx and can
+ *                   be checked against the file in assets/.
+ *   `src: 'office'` was given by the Office on 30 August and is not in that
+ *                   document. Confirm the wording before the meeting.
+ *
+ * Trim or reorder freely — the scene lays out however many entries are here.
+ */
+export const PGA_CAREER = [
+  {
+    label: 'Career diplomat',
+    sub: 'Representing Bangladesh across sixteen sessions of this Assembly',
+    src: 'office',       // the 'sixteen sessions' half is from the vision statement
+  },
+  {
+    label: 'Academic',
+    sub: null,
+    src: 'office',
+  },
+  {
+    label: 'United Nations official',
+    sub: 'The Secretariat in New York, and UNCTAD in Geneva',
+    src: 'vision',
+  },
+  {
+    label: 'Led UNCTAD\u2019s Technology Division',
+    sub: 'And the High-Level Panel of the Technology Bank for the Least Developed Countries',
+    src: 'vision',
+  },
+  {
+    label: 'Adviser to the Interim Government of Bangladesh',
+    sub: null,
+    src: 'office',
+  },
+  {
+    label: 'Foreign Minister of Bangladesh',
+    sub: 'In ministerial office since 2024',
+    src: 'office',       // 'ministerial level positions since 2024' is from the vision statement
+  },
+  {
+    label: 'Elected by the Member States',
+    sub: 'President of the eighty-first session of the General Assembly',
+    src: 'office',
+    final: true,
+  },
+];
+
 /** The session theme, used in the opening and echoed at the close. */
 export const THEME = {
   headline: 'Restoring Trust, Managing Transformation',

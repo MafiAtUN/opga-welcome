@@ -38,7 +38,7 @@ const SR = 44100;
 
 // Scene boundaries from SCENE_LIST in src/main.js, used to place the bells and
 // shape the dynamics. Kept as plain numbers so this file needs no imports.
-const SCENES = [0, 22, 38, 53, 65, 141, 185, 212, 245, 274, 293];
+const SCENES = [0, 22, 58, 73, 85, 153, 191, 218, 249, 277, 296];
 
 /** i · VI · III · VII in D minor. Frequencies in Hz, low to high. */
 const CHORDS = [
@@ -55,9 +55,9 @@ const CROSSFADE = 3.5;
  * carry it; the quiet scenes stay quiet so the voice has room.
  */
 const DYNAMICS = [
-  [0, 0.00], [3, 0.42], [22, 0.52], [38, 0.46], [53, 0.50],
-  [65, 0.72], [110, 0.80], [141, 0.52], [185, 0.46], [212, 0.68],
-  [245, 0.58], [274, 0.72], [289, 0.60], [300, 0.00],
+  [0, 0.00], [3, 0.42], [22, 0.50], [58, 0.46], [73, 0.50],
+  [85, 0.72], [125, 0.80], [153, 0.52], [191, 0.46], [218, 0.68],
+  [249, 0.58], [277, 0.72], [295, 0.60], [305, 0.00],
 ];
 
 const lerp = (a, b, t) => a + (b - a) * t;

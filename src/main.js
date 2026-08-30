@@ -15,7 +15,7 @@ import * as G from './globe.js';
 import * as UI from './ui.js';
 import { attachNarration } from './narration.js';
 import { COUNTRIES, WELCOME_IN, UN_HQ } from '../data/countries.js';
-import { PGA, THEME, PILLARS } from '../data/vision.js';
+import { PGA, PGA_CAREER, THEME, PILLARS } from '../data/vision.js';
 import * as D from './derive.js';
 
 const gsap = window.gsap;
@@ -26,14 +26,14 @@ const COUNT = 16000;
 // or retimed without hand-recomputing every start time after it.
 const SCENE_LIST = [
   { key: 's0', name: 'Cold open',   dur: 22, shape: ['scatter', 'logo'] },
-  { key: 's1', name: 'Theme',       dur: 16, shape: ['logo', 'logo'] },
+  { key: 's1', name: 'The President', dur: 36, shape: ['logo', 'logo'] },
   { key: 's2', name: 'Welcome',     dur: 15, shape: ['logo', 'nebula'] },
   { key: 's3', name: 'Numbers',     dur: 12, shape: ['nebula', 'nebula'] },
-  { key: 's4', name: 'Globe',       dur: 76, shape: ['nebula', 'globe'] },
-  { key: 's5', name: 'Faces',       dur: 44, shape: ['globe', 'globe'] },
+  { key: 's4', name: 'Globe',       dur: 68, shape: ['nebula', 'globe'] },
+  { key: 's5', name: 'Faces',       dur: 38, shape: ['globe', 'globe'] },
   { key: 's6', name: 'Languages',   dur: 27, shape: ['globe', 'sphere'] },
-  { key: 's7', name: 'Priorities',  dur: 33, shape: ['sphere', 'sphere'] },
-  { key: 's8', name: 'Composition', dur: 29, shape: ['sphere', 'sphere'] },
+  { key: 's7', name: 'Priorities',  dur: 31, shape: ['sphere', 'sphere'] },
+  { key: 's8', name: 'Composition', dur: 28, shape: ['sphere', 'sphere'] },
   { key: 's9', name: 'Close',       dur: 19, shape: ['sphere', 'logo'] },
 ];
 const SCENES = (() => {
@@ -268,6 +268,8 @@ function buildDom() {
   $('#themePga').innerHTML = PGA.show
     ? `<b>${PGA.name}</b>${PGA.role}`
     : '';
+  $('#pgaName').textContent = PGA.name;
+  app.career = UI.buildCareer($('#pgaRoles'), PGA_CAREER);
   $('#pillarsTheme').textContent = THEME.headline;
   $('#closingTheme').textContent = THEME.headline;
   app.pillars = UI.buildPillars($('#pillarGrid'), PILLARS);
@@ -431,32 +433,58 @@ function sceneColdOpen(tl, i) {
 //     arriving as a separate slide.
 function sceneTheme(tl, i) {
   const s = SCENES[i], node = scenesEl[i];
-  const [eyebrow, head, rule, sub, pga] = node.querySelectorAll('.reveal');
+  const [eyebrow, head, rule, sub, pga] = node.querySelectorAll('.theme-block .reveal');
+  const block = $('#pgaBlock');
+  const roles = app.career;
 
   tl.set(node, { visibility: 'visible', opacity: 1 }, s.at)
     .set(app.aim, { x: 0, y: 0 }, s.at);
 
-  // The mark lifts clear and drops to a faint watermark. Kept deliberately
-  // low — the theme is the message here, and the mark behind it must read as
-  // texture rather than as a second thing to look at.
+  // The mark drops to a faint watermark — the theme and the man are the
+  // message here, and the mark behind must read as texture, not competition.
   tl.to(app.globeRoot.position, { y: 0, duration: 3, ease: 'power2.inOut' }, s.at)
-    .to(app.field.uniforms.uOpacity, { value: 0.07, duration: 2.5 }, s.at)
-    .to(app.field.uniforms.uSize, { value: 3.4, duration: 2.5 }, s.at);
+    // Fainter than the other scenes: this one is a wall of words and the mark
+    // sits directly behind them.
+    .to(app.field.uniforms.uOpacity, { value: 0.035, duration: 2.5 }, s.at)
+    .to(app.field.uniforms.uSize, { value: 3.0, duration: 2.5 }, s.at);
 
+  // ── The career, one post at a time. The list is an argument: by the time
+  //    the last line lands, the election reads as a conclusion rather than an
+  //    announcement.
+  tl.fromTo($('#pgaEyebrow'), { opacity: 0, y: 18, letterSpacing: '0.9em' },
+      { opacity: 1, y: 0, letterSpacing: '0.42em', duration: 1.6, ease: 'power3.out' }, s.at + 0.5)
+    .fromTo($('#pgaName'), { opacity: 0, y: 28 },
+      { opacity: 1, y: 0, duration: 1.8, ease: 'power3.out' }, s.at + 1.1);
+
+  const first = s.at + 3.0;
+  const per = 2.35;
+  roles.forEach((r, k) => {
+    tl.fromTo(r, { opacity: 0, x: -26 },
+      { opacity: k === roles.length - 1 ? 1 : 0.72, x: 0,
+        duration: 1.1, ease: 'power3.out' }, first + k * per);
+  });
+  // Everything lifts to full for a beat, so the whole career is read at once.
+  tl.to(roles, { opacity: 1, duration: 0.9, stagger: 0.04 }, first + roles.length * per);
+
+  const OUT = s.at + s.dur - 15;
+  tl.to(block, { opacity: 0, y: -34, duration: 1.5, ease: 'power2.in' }, OUT);
+
+  // ── And his theme, which is the job he was elected to do.
+  const T = OUT + 1.4;
   tl.fromTo(eyebrow, { opacity: 0, y: 22, letterSpacing: '0.9em' },
-      { opacity: 1, y: 0, letterSpacing: '0.42em', duration: 1.8, ease: 'power3.out' }, s.at + 0.6)
+      { opacity: 1, y: 0, letterSpacing: '0.42em', duration: 1.6, ease: 'power3.out' }, T)
     .fromTo(head, { opacity: 0, y: 44 },
-      { opacity: 1, y: 0, duration: 2.6, ease: 'power3.out' }, s.at + 1.3)
+      { opacity: 1, y: 0, duration: 2.4, ease: 'power3.out' }, T + 0.6)
     .fromTo(rule, { opacity: 0, scaleX: 0 },
-      { opacity: 1, scaleX: 1, duration: 1.6, ease: 'power3.out' }, s.at + 3)
+      { opacity: 1, scaleX: 1, duration: 1.5, ease: 'power3.out' }, T + 2.2)
     .fromTo(sub, { opacity: 0, y: 24 },
-      { opacity: 1, y: 0, duration: 2.2, ease: 'power3.out' }, s.at + 3.4)
+      { opacity: 1, y: 0, duration: 2, ease: 'power3.out' }, T + 2.5)
     .fromTo(pga, { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 2, ease: 'power3.out' }, s.at + 5.2);
+      { opacity: 1, y: 0, duration: 1.8, ease: 'power3.out' }, T + 4.2);
 
   tl.to([eyebrow, head, rule, sub, pga], {
-    opacity: 0, y: -26, duration: 1.5, stagger: 0.07, ease: 'power2.in',
-  }, s.at + s.dur - 2.4)
+    opacity: 0, y: -26, duration: 1.4, stagger: 0.06, ease: 'power2.in',
+  }, s.at + s.dur - 2.2)
     .set(node, { visibility: 'hidden' }, s.at + s.dur);
 }
 

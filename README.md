@@ -1,6 +1,6 @@
 # OPGA 81 — Welcome
 
-A 4 minute 53 second opening presentation for the first all-staff meeting of the
+A 4 minute 56 second opening presentation for the first all-staff meeting of the
 Office of the President of the General Assembly, 81st Session.
 
 **Review copy — https://mafiatun.github.io/opga-welcome/**
@@ -70,11 +70,16 @@ and the room does not.
 **Staff data comes from `data/staff.js`.** It is the single source of truth for
 everyone in the office.
 
-**The President's theme and six priorities come from `data/vision.js`**,
-transcribed from `assets/Vision-Statement-Bangaldesh-PGA81.docx`. That document
-is a *candidacy* statement — confirm the President's styling and the pillar
-titles against the final published version. Setting `PGA.show = false` drops the
-name and leads with the theme alone.
+**The President's career, theme and six priorities come from `data/vision.js`.**
+Each career entry carries a `src` field: `vision` means it is stated in the
+vision statement and can be checked against the file in `assets/`; `office`
+means it came from the Office directly and is not in that document. Confirm the
+`office` lines before the meeting.
+
+The rest of that file is
+transcribed from `assets/Vision-Statement-Bangaldesh-PGA81.docx`. Setting
+`PGA.show = false` drops the name from the theme card and leads with the theme
+alone.
 
 Every number in the presentation — the headline counts, which countries light up
 on the globe, the language cloud, the gender split, the funding bar, the regional
@@ -158,7 +163,7 @@ up to ~1.5s short; `--verify` is the one to trust.
 Chrome via Playwright
 and plays the presentation for real: it checks the voice autoplays, stays in
 sync, survives pause and scene jumps, and that the last line still lands over
-the held final card. Use `npm run check:full` to play the whole 4:53, or add
+the held final card. Use `npm run check:full` to play the whole 4:56, or add
 `--headed` to watch it and get a true frame-rate reading.
 
 **`npm run check:hosted`** proves the start card behaves in both cases: shown
@@ -237,14 +242,14 @@ need to know the narration exists.
 | # | Scene | Length |
 |---|---|---|
 | 0 | Cold open — particles assemble the PGA81 mark | 22s |
-| 1 | The President's theme for the session | 16s |
+| 1 | The President — his career, then his theme for the session | 36s |
 | 2 | "Welcome" in the scripts spoken in the office | 15s |
 | 3 | The headline numbers | 12s |
-| 4 | The globe — each nation ignites with the faces of its colleagues, arcs converge on New York | 76s |
-| 5 | The people, region by region | 44s |
+| 4 | The globe — each nation ignites with the faces of its colleagues, arcs converge on New York | 68s |
+| 5 | The people, region by region | 38s |
 | 6 | Languages | 27s |
-| 7 | The President's six priorities | 33s |
-| 8 | Gender, how we came here, regional groups | 29s |
+| 7 | The President's six priorities | 31s |
+| 8 | Gender, how we came here, regional groups | 28s |
 | 9 | Close — everything returns to the mark | 19s |
 
 Stills of each are in `preview/`.
@@ -277,7 +282,7 @@ scene transforms into the next.
   because of map resolution.
 
 - **`src/main.js`** — one GSAP master timeline holds every tween, which makes the
-  full 4:53 scrubbable: seeking to a scene renders the correct state instantly.
+  full 4:56 scrubbable: seeking to a scene renders the correct state instantly.
   The globe's orientation is a tweened value, never integrated per frame, so a
   seek always reproduces the exact framing.
 

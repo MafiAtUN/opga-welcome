@@ -107,6 +107,22 @@ const state = () => page.evaluate(() => {
   };
 });
 
+// ── Pre-flight: does what is on disk still match the roster? ────────────────
+// Removing someone from data/staff.js does not remove their headshot, and a
+// published copy would go on carrying the face of a colleague who has left.
+{
+  const { readdirSync } = await import('node:fs');
+  const { STAFF } = await import(`file://${join(ROOT, 'data/staff.js')}`);
+  const ids = new Set(STAFF.map((p) => p.id));
+  const files = readdirSync(join(ROOT, 'assets/photos'))
+    .filter((f) => /\.(jpe?g|png)$/i.test(f));
+  const orphans = files.filter((f) => !ids.has(f.replace(/\.[^.]+$/, '')));
+  head('Roster and assets');
+  orphans.length === 0
+    ? pass('every headshot belongs to someone on the roster', `${files.length} files`)
+    : orphans.forEach((f) => fail(`assets/photos/${f} is not on the roster — delete it`));
+}
+
 head('OPGA 81 — real-browser playback check');
 info(`Google Chrome · ${FULL ? 'full run' : 'sampled run'} · ${HEADED ? 'headed' : 'headless'}`);
 

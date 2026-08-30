@@ -184,7 +184,14 @@ if (process.argv.includes('--verify')) {
 
 // Must match SCENE_LIST in src/main.js. The last cue is written to land a few
 // seconds past it, over the final card, which the timeline holds indefinitely.
-const TOTAL = 293;
+// Read from SCENE_LIST in src/main.js rather than repeated here — the two
+// drifted apart once already when a scene was added.
+const TOTAL = (() => {
+  const src = readFileSync(join(ROOT, 'src/main.js'), 'utf8');
+  const durs = [...src.matchAll(/\{ key: 's\d+',[^}]*?dur:\s*(\d+)/g)].map((m) => Number(m[1]));
+  if (!durs.length) throw new Error('could not read SCENE_LIST durations from src/main.js');
+  return durs.reduce((a, b) => a + b, 0);
+})();
 
 if (has('--sample')) {
   const creds = credentials();
