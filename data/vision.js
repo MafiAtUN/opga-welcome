@@ -3,11 +3,9 @@
 //
 //  Transcribed from: assets/Vision-Statement-Bangaldesh-PGA81.docx
 //
-//  ⚠️  That document is a CANDIDACY vision statement — its cover reads
-//      "CANDIDATE FOR PRESIDENT, 81st SESSION". Confirm the styling below is
-//      how the Office wants the President referred to on screen before the
-//      meeting, and confirm the six pillar titles against the final published
-//      version if one exists.
+//  The source document was written as a candidacy statement; H.E. Dr. Khalilur
+//  Rahman has since taken office as President of the 81st Session, confirmed by
+//  the Office on 30 August 2026. The six pillars below are his programme.
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const PGA = {

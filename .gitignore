@@ -9,3 +9,6 @@ node_modules/
 # transcribed from them lives in data/ and is committed.
 assets/*.pdf
 assets/*.docx
+
+# The synthesised bed before mixing — 53MB, regenerate with tools/score.mjs
+.narration-build/

@@ -298,7 +298,7 @@ function buildDom() {
 
   app.glyphs = UI.buildGlyphField($('#glyphField'), D.genderSplit);
   app.splitLegend = UI.buildSplitLegend($('#splitLegend'), D.genderSplit);
-  app.flow = UI.buildFlowBar($('#flowBar'), $('#flowLegend'), D.byContract);
+  app.origin = UI.buildOrigin($('#originPanel'), D.howWeCameHere);
   app.bloom = UI.buildGroupBloom($('#groupBloom'), D.byRegionalGroup, D.STATS.people);
 
   $('#closingLine').textContent =
@@ -737,7 +737,7 @@ function scenePriorities(tl, i) {
 // 8 · Composition: gender, funding, regional groups.
 function sceneComposition(tl, i) {
   const s = SCENES[i], node = scenesEl[i];
-  const [pGender, pContract, pGroups] = node.querySelectorAll('.comp-panel');
+  const [pGender, pOrigin, pGroups] = node.querySelectorAll('.comp-panel');
   const slot = s.dur / 3;
 
   tl.set(node, { visibility: 'visible', opacity: 1 }, s.at);
@@ -754,20 +754,21 @@ function sceneComposition(tl, i) {
       { opacity: 1, y: 0, duration: 1.1, stagger: 0.12, ease: 'power3.out' }, t0 + 2.6)
     .to(pGender, { opacity: 0, y: -30, duration: 0.9, ease: 'power2.in' }, t0 + slot - 1.2);
 
-  // — Contract type
+  // — How we came here
   const t1 = s.at + slot + 0.2;
-  tl.fromTo(pContract, { opacity: 0 }, { opacity: 1, duration: 0.8 }, t1)
-    .fromTo(pContract.querySelector('.panel-title'), { opacity: 0, y: 18 },
-      { opacity: 1, y: 0, duration: 1 }, t1);
-  app.flow.segs.forEach((seg, i) => {
-    tl.fromTo(seg, { width: '0%' },
-      { width: `${seg.dataset.pct}%`, duration: 1.5, ease: 'power3.out' }, t1 + 0.5 + i * 0.14)
-      .fromTo(seg.querySelector('.segn'), { opacity: 0 },
-        { opacity: 1, duration: 0.5 }, t1 + 1.4 + i * 0.14);
-  });
-  tl.fromTo(app.flow.legs, { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.8, stagger: 0.07 }, t1 + 1.6)
-    .to(pContract, { opacity: 0, y: -30, duration: 0.9, ease: 'power2.in' }, t1 + slot - 1.2);
+  tl.fromTo(pOrigin, { opacity: 0 }, { opacity: 1, duration: 0.8 }, t1)
+    .fromTo(pOrigin.querySelector('.panel-title'), { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 1 }, t1)
+    .fromTo(app.origin.blocks, { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 1.2, stagger: 0.35, ease: 'power3.out' }, t1 + 0.5)
+    .fromTo(app.origin.div, { opacity: 0, scaleY: 0 },
+      { opacity: 1, scaleY: 1, duration: 1, ease: 'power2.out' }, t1 + 0.9)
+    .fromTo(app.origin.flags, { opacity: 0, y: 14, scale: 0.6 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'back.out(2)',
+        stagger: { each: 0.07, from: 'center' } }, t1 + 1.8)
+    .fromTo(app.origin.line, { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' }, t1 + 3.0)
+    .to(pOrigin, { opacity: 0, y: -30, duration: 0.9, ease: 'power2.in' }, t1 + slot - 1.2);
 
   // — Regional groups
   const t2 = s.at + slot * 2;

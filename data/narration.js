@@ -62,7 +62,7 @@ export const CUES = [
   { at:  40.2, text: 'An office like this one is built from nothing, in a matter of weeks.',
     note: 'the logo dissolves; the ring of scripts begins to arrive' },
   { at:  45.3, text:
-      'Strangers arrive from thirty-one countries and are asked, immediately, to work as one.',
+      'Strangers arrive from twenty-five countries and are asked, immediately, to work as one.',
     note: 'the words are cycling through the office’s own languages' },
   { at:  52.3, text: 'So we start where the Assembly starts. With welcome.',
     note: 'the words bloom together and hand over' },
@@ -70,7 +70,7 @@ export const CUES = [
   // 3 · The headline numbers ──────────────────────────────────── 53–65 ──
   { at:  57.9, text: 'Nine teams — and not one of them can finish a day’s work without another.',
     note: 'the second counter' },
-  { at:  63.4, text: 'And thirty-one places we call home.',
+  { at:  63.4, text: 'And twenty-five places we call home.',
     note: 'the third counter, handing off to the globe' },
 
   // ═══ III. Where we come from ═════════════════════════════════════════════
@@ -95,23 +95,27 @@ export const CUES = [
   { at: 124.0, text:
       'Whatever the Assembly argues about this year, someone in this room has lived it.',
     note: 'the last countries ignite; the camera starts to pull back' },
-  { at: 133.4, ssml: 'Thirty-one nations. <break time="300ms"/> One Assembly.',
+  { at: 133.4, ssml: 'Twenty-five nations. <break time="300ms"/> One Assembly.',
     note: 'the closing card appears at 133' },
 
   // ═══ IV. Who we are to each other ════════════════════════════════════════
   // 5 · Faces, region by region ─────────────────────────────── 141–185 ──
   { at: 143.0, text: 'Now the harder thing to put on a map. The people.',
     note: 'the globe slides right; the first cards come in' },
-  { at: 149.6, text:
-      'Some of you have served several sessions and know exactly what late September will feel like.',
-    note: 'over the middle of the region sweep' },
-  { at: 158.0, text:
-      'Some of you started this month and are still learning where the good coffee is.',
-    note: 'the room should smile here' },
-  { at: 166.4, text: 'By next September, nobody will remember which was which.',
-    note: 'the sweep is nearing its last regions' },
-  { at: 174.0, text:
-      'Because this is not a delegation. There is no flag to defend at this desk — only a hundred and ninety-three Member States who have to be able to trust us equally.',
+  { at: 148.5, text: 'We are an intergenerational team.',
+    note: 'the first region’s cards are on screen' },
+  { at: 152.2, text:
+      'Colleagues in their mid-twenties, working beside people who were negotiating ' +
+      'in this building before the youngest of us were born.',
+    note: 'the sweep moves through the middle regions' },
+  { at: 161.6, ssml:
+      'One brings the assumption that all of this could work better. ' +
+      '<break time="300ms"/> The other knows exactly why it does not — ' +
+      'and how to move it anyway.',
+    note: 'the point of the scene: neither half is the junior partner' },
+  { at: 172.0, text:
+      'And there is no flag to defend at this desk. Only a hundred and ninety-three ' +
+      'Member States who have to be able to trust us equally.',
     note: 'the President’s own commitment: everyone’s President, without fear or favour' },
 
   // ═══ V. What we can do that a smaller office could not ═══════════════════
@@ -122,7 +126,7 @@ export const CUES = [
   { at: 198.4, text:
       'It is the difference between a delegation being heard and a delegation being handled.',
     note: 'the cloud is at its fullest' },
-  { at: 206.2, text: 'Twenty-three languages, in one office.',
+  { at: 206.2, text: 'Nineteen languages, in one office.',
     note: 'the number resolves at 205.6' },
   { at: 209.7, text:
       'Five of the six official languages of the United Nations are already in this room.',
@@ -147,30 +151,33 @@ export const CUES = [
 
   // ═══ VII. Who carries it ═════════════════════════════════════════════════
   // 8 · Composition ─────────────────────────────────────────── 245–274 ──
-  { at: 246.8, text: 'Sixty-three per cent of this Office is women.',
+  { at: 246.6, text: 'Sixty-five per cent of this Office is women.',
     note: 'the glyph field fills in' },
-  { at: 250.6, text:
-      'In a system still arguing about who belongs at the peace table, that is worth saying out loud.',
+  { at: 250.3, text:
+      'In a system still arguing about who belongs at the peace table, that is worth saying.',
     note: 'the legend appears at 248 — resolution 1325 is in the President’s first pillar' },
-  { at: 258.2, text:
-      'We are paid for in half a dozen different ways — secondments, consultancies, regular and extra-budgetary posts.',
-    note: 'the funding bar grows from 255.4' },
-  { at: 265.8, ssml:
-      'Different contracts. <break time="260ms"/> One standard. <break time="400ms"/> ' +
-      'And four of the five regional groups are already here — we will be speaking for all five.',
-    note: 'the segments settle, then the regional bloom opens at 264.3 — ' +
-          'Eastern Europe is the group we are missing' },
+  { at: 256.0, text:
+      'Fourteen of us were sent to this work by our own governments — thirteen countries ' +
+      'that could have kept their best people at home.',
+    note: 'the "how we came here" panel; no contract type is named anywhere, by request' },
+  { at: 264.2, ssml:
+      'They work beside twenty colleagues of the United Nations itself. ' +
+      '<break time="280ms"/> Different routes in. <break time="260ms"/> One Office.',
+    note: 'both figures on screen; the flags of the sending countries are landing' },
+  { at: 272.3, text:
+      'Four of the five regional groups are already here. We speak for all five.',
+    note: 'the regional bloom opens at 264.3 — Eastern Europe is the group we are missing' },
 
   // ═══ VIII. Handing it over ═══════════════════════════════════════════════
   // 9 · Close — everything returns to the mark ──────────────── 274–293 ──
-  { at: 275.8, ssml:
+  { at: 278.6, ssml:
       'Hammarskjöld said this Organization was not built to bring us to heaven. ' +
       '<break time="320ms"/> It was built to save us from hell.',
     note: 'the field is folding back into the mark' },
-  { at: 285.2, text:
+  { at: 286.3, text:
       'That is the work. Welcome to the Office of the President of the General Assembly.',
     note: 'the closing title reveals from 279.8' },
-  { at: 291.4, ssml:
+  { at: 292.3, ssml:
       'Multilateralism is not only relevant. <break time="260ms"/> ' +
       'It is indispensable to a future of peace, dignity, and prosperity for all.',
     note: 'the vision statement’s own last sentence, spoken over the held final card ' +
@@ -185,9 +192,12 @@ export const CUES = [
  */
 export const SPOKEN_FIGURES = {
   teams: 9,
-  countries: 31,
-  languages: 23,
-  womenPct: 63,
+  countries: 25,
+  languages: 19,
+  womenPct: 65,
   officialLanguagesPresent: 5,
   regionalGroups: 4,
+  seconded: 14,
+  sendingCountries: 13,
+  unStaff: 20,
 };

@@ -19,31 +19,38 @@ export const nativeLanguageOf = (country) => COUNTRIES[country]?.languages?.[0] 
  */
 function withNativeLanguage(p) {
   const stated = p.languages || [];
-  const native = nativeLanguageOf(p.country);
+  const native = nativeLanguageOf(p.countries?.[0]);
   let languages = stated;
   if (native && !languages.includes(native)) languages = [native, ...languages];
-  if (p.country && !languages.includes('English')) languages = [...languages, 'English'];
+  if (p.countries?.length && !languages.includes('English')) languages = [...languages, 'English'];
   return languages === stated ? p : { ...p, languages };
 }
 
-/** Everyone the presentation counts: excludes vacant posts. */
-export const people = STAFF.filter((p) => !p.vacant).map(withNativeLanguage);
+/** Everyone the presentation counts. */
+export const people = STAFF.map(withNativeLanguage);
+
+/**
+ * A person's primary nationality — the first listed. Used wherever someone
+ * must be counted exactly once (regional groups, region sweep). Both of a
+ * dual national's countries still light up on the globe.
+ */
+export const primaryCountry = (p) => p.countries?.[0] ?? null;
 
 /**
  * Rows whose native language came from their nationality rather than from the
  * directory — i.e. an inference to sanity-check before the meeting.
  */
-export const inferredLanguages = STAFF.filter((p) => !p.vacant)
+export const inferredLanguages = STAFF
   .map((p) => ({ p, added: withNativeLanguage(p).languages.filter((l) => !(p.languages || []).includes(l)) }))
   .filter((r) => r.added.length)
-  .map(({ p, added }) => ({ id: p.id, name: p.name, country: p.country, added }));
+  .map(({ p, added }) => ({ id: p.id, name: p.name, country: primaryCountry(p), added }));
 
 /** People we can actually show a card for: has a name. */
 export const named = people.filter((p) => p.name);
 
 /** Countries with at least one person. Sorted for a stable ignition order. */
 export const countries = (() => {
-  const set = new Set(people.map((p) => p.country).filter(Boolean));
+  const set = new Set(people.flatMap((p) => p.countries || []));
   if (INCLUDE_PENDING) PENDING_COUNTRIES.forEach((c) => set.add(c));
   return [...set];
 })();
@@ -52,9 +59,10 @@ export const countries = (() => {
 export const byCountry = (() => {
   const m = new Map();
   for (const p of people) {
-    if (!p.country) continue;
-    if (!m.has(p.country)) m.set(p.country, []);
-    m.get(p.country).push(p);
+    for (const c of p.countries || []) {
+      if (!m.has(c)) m.set(c, []);
+      m.get(c).push(p);
+    }
   }
   return m;
 })();
@@ -82,22 +90,30 @@ export const byLanguage = (() => {
 export const byRegionalGroup = (() => {
   const m = new Map();
   for (const p of people) {
-    const g = COUNTRIES[p.country]?.group;
+    // Primary nationality only, so a dual national is not counted twice and
+    // the groups still add up to the size of the Office.
+    const g = COUNTRIES[primaryCountry(p)]?.group;
     if (!g) continue;
     m.set(g, (m.get(g) || 0) + 1);
   }
   return new Map([...m].sort((a, b) => b[1] - a[1]));
 })();
 
-/** contract type -> number of people */
-export const byContract = (() => {
-  const m = new Map();
-  for (const p of people) {
-    // "Consultant (XB)" and "Secondment (UN Women)" collapse to their head noun.
-    const c = (p.contract || 'Not stated').replace(/\s*\(.*\)$/, '');
-    m.set(c, (m.get(c) || 0) + 1);
-  }
-  return new Map([...m].sort((a, b) => b[1] - a[1]));
+/**
+ * How people came to be here, framed the way the Office wants it said: not a
+ * breakdown of contract types, but governments releasing their people to this
+ * work alongside colleagues employed by the United Nations.
+ */
+export const howWeCameHere = (() => {
+  const seconded = people.filter((p) => p.seconded);
+  const un = people.filter((p) => !p.seconded);
+  const sendingCountries = [...new Set(seconded.map(primaryCountry).filter(Boolean))];
+  return {
+    seconded: seconded.length,
+    un: un.length,
+    sendingCountries,
+    sendingCountryCount: sendingCountries.length,
+  };
 })();
 
 export const genderSplit = {
@@ -151,6 +167,6 @@ export const REGION_SWEEP = [
 export const peopleByRegion = REGION_SWEEP
   .map(({ label, test }) => ({
     label,
-    people: named.filter((p) => p.country && test(p.country)),
+    people: named.filter((p) => primaryCountry(p) && test(primaryCountry(p))),
   }))
   .filter((r) => r.people.length);

@@ -5,8 +5,8 @@
     "pitch": "0%"
   },
   "timeline": 293,
-  "track": 301.66,
-  "renderedAt": "2026-08-30T16:16:09.613Z",
+  "track": 302.56,
+  "renderedAt": "2026-08-30T17:30:43.118Z",
   "cues": [
     {
       "at": 5.6,
@@ -40,8 +40,8 @@
     },
     {
       "at": 45.3,
-      "dur": 6.51,
-      "text": "Strangers arrive from thirty-one countries and are asked, immediately, to work as one.",
+      "dur": 6.33,
+      "text": "Strangers arrive from twenty-five countries and are asked, immediately, to work as one.",
       "note": "the words are cycling through the office’s own languages"
     },
     {
@@ -58,8 +58,8 @@
     },
     {
       "at": 63.4,
-      "dur": 2.57,
-      "text": "And thirty-one places we call home.",
+      "dur": 2.7,
+      "text": "And twenty-five places we call home.",
       "note": "the third counter, handing off to the globe"
     },
     {
@@ -106,8 +106,8 @@
     },
     {
       "at": 133.4,
-      "dur": 3.35,
-      "text": "Thirty-one nations. One Assembly.",
+      "dur": 3.54,
+      "text": "Twenty-five nations. One Assembly.",
       "note": "the closing card appears at 133"
     },
     {
@@ -117,27 +117,27 @@
       "note": "the globe slides right; the first cards come in"
     },
     {
-      "at": 149.6,
-      "dur": 5.78,
-      "text": "Some of you have served several sessions and know exactly what late September will feel like.",
-      "note": "over the middle of the region sweep"
+      "at": 148.5,
+      "dur": 2.45,
+      "text": "We are an intergenerational team.",
+      "note": "the first region’s cards are on screen"
     },
     {
-      "at": 158,
-      "dur": 4.72,
-      "text": "Some of you started this month and are still learning where the good coffee is.",
-      "note": "the room should smile here"
+      "at": 152.2,
+      "dur": 7.2,
+      "text": "Colleagues in their mid-twenties, working beside people who were negotiating in this building before the youngest of us were born.",
+      "note": "the sweep moves through the middle regions"
     },
     {
-      "at": 166.4,
-      "dur": 4.03,
-      "text": "By next September, nobody will remember which was which.",
-      "note": "the sweep is nearing its last regions"
+      "at": 161.6,
+      "dur": 8.32,
+      "text": "One brings the assumption that all of this could work better. The other knows exactly why it does not — and how to move it anyway.",
+      "note": "the point of the scene: neither half is the junior partner"
     },
     {
-      "at": 174,
-      "dur": 10.39,
-      "text": "Because this is not a delegation. There is no flag to defend at this desk — only a hundred and ninety-three Member States who have to be able to trust us equally.",
+      "at": 172,
+      "dur": 7.96,
+      "text": "And there is no flag to defend at this desk. Only a hundred and ninety-three Member States who have to be able to trust us equally.",
       "note": "the President’s own commitment: everyone’s President, without fear or favour"
     },
     {
@@ -154,8 +154,8 @@
     },
     {
       "at": 206.2,
-      "dur": 2.88,
-      "text": "Twenty-three languages, in one office.",
+      "dur": 2.98,
+      "text": "Nineteen languages, in one office.",
       "note": "the number resolves at 205.6"
     },
     {
@@ -189,43 +189,49 @@
       "note": "pillars V and VI, on the hold before the cards lift"
     },
     {
-      "at": 246.8,
-      "dur": 2.96,
-      "text": "Sixty-three per cent of this Office is women.",
+      "at": 246.6,
+      "dur": 3.12,
+      "text": "Sixty-five per cent of this Office is women.",
       "note": "the glyph field fills in"
     },
     {
-      "at": 250.6,
-      "dur": 5.69,
-      "text": "In a system still arguing about who belongs at the peace table, that is worth saying out loud.",
+      "at": 250.3,
+      "dur": 5.32,
+      "text": "In a system still arguing about who belongs at the peace table, that is worth saying.",
       "note": "the legend appears at 248 — resolution 1325 is in the President’s first pillar"
     },
     {
-      "at": 258.2,
-      "dur": 6.92,
-      "text": "We are paid for in half a dozen different ways — secondments, consultancies, regular and extra-budgetary posts.",
-      "note": "the funding bar grows from 255.4"
+      "at": 256,
+      "dur": 7.5,
+      "text": "Fourteen of us were sent to this work by our own governments — thirteen countries that could have kept their best people at home.",
+      "note": "the \"how we came here\" panel; no contract type is named anywhere, by request"
     },
     {
-      "at": 265.8,
-      "dur": 9.4,
-      "text": "Different contracts. One standard. And four of the five regional groups are already here — we will be speaking for all five.",
-      "note": "the segments settle, then the regional bloom opens at 264.3 — Eastern Europe is the group we are missing"
+      "at": 264.2,
+      "dur": 7.57,
+      "text": "They work beside twenty colleagues of the United Nations itself. Different routes in. One Office.",
+      "note": "both figures on screen; the flags of the sending countries are landing"
     },
     {
-      "at": 275.8,
+      "at": 272.3,
+      "dur": 5.85,
+      "text": "Four of the five regional groups are already here. We speak for all five.",
+      "note": "the regional bloom opens at 264.3 — Eastern Europe is the group we are missing"
+    },
+    {
+      "at": 278.6,
       "dur": 7.19,
       "text": "Hammarskjöld said this Organization was not built to bring us to heaven. It was built to save us from hell.",
       "note": "the field is folding back into the mark"
     },
     {
-      "at": 285.2,
+      "at": 286.3,
       "dur": 5.5,
       "text": "That is the work. Welcome to the Office of the President of the General Assembly.",
       "note": "the closing title reveals from 279.8"
     },
     {
-      "at": 291.4,
+      "at": 292.3,
       "dur": 9.06,
       "text": "Multilateralism is not only relevant. It is indispensable to a future of peace, dignity, and prosperity for all.",
       "note": "the vision statement’s own last sentence, spoken over the held final card after the timeline has come to rest"

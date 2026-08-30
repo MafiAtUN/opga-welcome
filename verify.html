@@ -122,8 +122,8 @@
 <h2>Full roster</h2>
 <table id="roster">
   <thead><tr>
-    <th>Name</th><th>Title</th><th>Team</th><th>Country</th>
-    <th>Grade</th><th>Contract</th><th>Languages</th>
+    <th>Name</th><th>Title</th><th>Team</th><th>Nationality</th>
+    <th>How they came</th><th>Languages</th>
   </tr></thead>
   <tbody></tbody>
 </table>
@@ -137,11 +137,12 @@ const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? '—').replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
 
 $('#lede').innerHTML =
-  `Transcribed from the 18 August directory: <b>${STAFF.length} entries</b>, of which ` +
-  `<b>${D.people.length}</b> are counted (vacant posts excluded) and ` +
-  `<b>${D.unverified.length}</b> still need checking. ` +
-  `Note the directory's own tally reads <b>Male 13 / Female 21 = 34</b>, which does not ` +
-  `match the ${STAFF.length} rows in its tables — one of the two is out of date.`;
+  `Roster confirmed by the Office on 30 August 2026: <b>${STAFF.length} colleagues</b> ` +
+  `from <b>${D.STATS.countries} nationalities</b>, speaking <b>${D.STATS.languages} languages</b>. ` +
+  (D.unverified.length
+    ? `<b>${D.unverified.length}</b> row(s) still carry something unconfirmed — see below.`
+    : `Every nationality is confirmed.`) +
+  ` This supersedes the 18 August directory, whose own tally never matched its tables.`;
 
 // ── Rows needing confirmation
 $('#unverified').innerHTML = D.unverified.map((p) => {
@@ -150,7 +151,7 @@ $('#unverified').innerHTML = D.unverified.map((p) => {
     <div class="nm">${esc(p.name || '(no name in the directory)')}
       <span class="team">${esc(p.team)}</span></div>
     <div class="fields">
-      <span>country <b>${esc(p.country)}</b></span>
+      <span>nationality <b>${esc((p.countries || []).join(' + '))}</b></span>
       <span>gender <b>${esc(p.gender)}</b></span>
       <span>languages <b>${esc((p.languages || []).join(', ') || '—')}</b></span>
     </div>
@@ -260,9 +261,8 @@ $('#roster tbody').innerHTML = STAFF.map((p) => `
     <td>${esc(p.name || '(unnamed)')}</td>
     <td>${esc(p.title)}</td>
     <td>${esc(p.team)}</td>
-    <td>${COUNTRIES[p.country]?.flag || ''} ${esc(p.country)}</td>
-    <td>${esc(p.grade)}</td>
-    <td>${esc(p.contract)}</td>
+    <td>${(p.countries || []).map((c) => `${COUNTRIES[c]?.flag || ''} ${esc(c)}`).join(' + ')}</td>
+    <td>${p.seconded ? 'Seconded' : 'United Nations'}</td>
     <td>${esc((p.languages || []).join(', ') || '—')}</td>
   </tr>`).join('');
 </script>

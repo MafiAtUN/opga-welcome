@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 // ─────────────────────────────────────────────────────────────────────────────
-//  Renders data/narration.js into assets/narration.m4a using Azure AI Speech.
+//  Renders data/narration.js into assets/narration.voice.m4a using Azure AI
+//  Speech. That file is the VOICE ONLY. `node tools/score.mjs` then writes the
+//  music bed and mixes the two into assets/narration.m4a, which is what the
+//  presentation actually plays. Keeping them separate means re-mixing never
+//  compounds music on top of music.
 //
 //  This is a BUILD-TIME tool. It is the only thing in the repo that touches
 //  the network, and the presentation itself never runs it — `present.command`
@@ -21,7 +25,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
+import { mkdirSync, writeFileSync, rmSync, existsSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -132,8 +136,9 @@ if (has('--check')) {
     womenPct: Math.round((D.genderSplit.F / (D.genderSplit.F + D.genderSplit.M)) * 100),
     officialLanguagesPresent: D.officialLanguages.present.length,
     regionalGroups: D.byRegionalGroup.size,
-    secondment: D.byContract.get('Secondment') ?? 0,
-    consultant: D.byContract.get('Consultant') ?? 0,
+    seconded: D.howWeCameHere.seconded,
+    unStaff: D.howWeCameHere.un,
+    sendingCountries: D.howWeCameHere.sendingCountryCount,
   };
   let stale = 0;
   for (const [k, spoken] of Object.entries(SPOKEN_FIGURES)) {
@@ -146,6 +151,33 @@ if (has('--check')) {
     ? `\n${stale} figure(s) have moved. Update the wording in data/narration.js and re-render.`
     : '\nEvery spoken figure still matches data/staff.js.');
   process.exit(stale ? 1 : 0);
+}
+
+// ── --verify: real overlaps, from the rendered durations ────────────────────
+if (process.argv.includes('--verify')) {
+  const meta = JSON.parse(readFileSync(join(OUT_DIR, 'narration.json'), 'utf8'));
+  const cues = meta.cues;
+  const mmss = (v) => `${Math.floor(v / 60)}:${String(Math.floor(v % 60)).padStart(2, '0')}`;
+  console.log(`\n  ${cues.length} rendered cues · track ${meta.track}s · timeline ${meta.timeline}s\n`);
+  let bad = 0;
+  cues.forEach((c, i) => {
+    const end = c.at + c.dur;
+    const next = cues[i + 1]?.at;
+    if (next === undefined) return;
+    const gap = next - end;
+    if (gap < 0) {
+      bad++;
+      console.log(`  ✗  ${mmss(c.at)} runs ${(-gap).toFixed(2)}s into the next line`);
+      console.log(`     “${c.text.slice(0, 72)}…”`);
+    } else if (gap < 0.3) {
+      console.log(`  ~  ${mmss(c.at)} leaves only ${gap.toFixed(2)}s  “${c.text.slice(0, 48)}…”`);
+    }
+  });
+  const tail = meta.track - meta.timeline;
+  console.log(bad
+    ? `\n  ${bad} line(s) actually overlap. Move their \`at\` in data/narration.js and re-render.`
+    : `\n  No line overlaps another. The last finishes ${tail.toFixed(1)}s after the timeline stops.`);
+  process.exit(bad ? 1 : 0);
 }
 
 // ── Render ──────────────────────────────────────────────────────────────────
@@ -179,7 +211,15 @@ for (const [i, cue] of CUES.entries()) {
     dur = ffprobe(file);
   } else {
     // ~2.4 words a second, which is what the voice averages at this rate.
-    dur = ((cue.ssml ?? cue.text).replace(/<[^>]+>/g, '').split(/\s+/).length) / 2.4;
+    // Estimate only, and a rough one: 2.75 words/second calibrated against the
+    // last render, plus any explicit <break>. Sentence-final pauses and the
+    // prosody rate still push the real figure up to ~1.5s higher, so treat a
+    // small predicted overlap as noise and use --verify after rendering for
+    // the authoritative answer.
+    const raw = cue.ssml ?? cue.text;
+    const breaks = [...raw.matchAll(/<break time="(\d+)ms"/g)]
+      .reduce((n, m) => n + Number(m[1]) / 1000, 0);
+    dur = raw.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length / 2.75 + breaks;
   }
   rendered.push({ ...cue, file, dur });
   process.stdout.write(`\r  ${i + 1}/${CUES.length} cues`);
@@ -214,7 +254,10 @@ if (tail > 0.05) {
 }
 console.log(`\n  ${rendered.length} cues · ${speech.toFixed(0)}s of speech in ${mmss(TOTAL)} ` +
             `(${Math.round((speech / TOTAL) * 100)}% of the run)`);
-if (problems) console.log(`  ${problems} timing problem(s) above — adjust \`at\` in data/narration.js.`);
+if (problems) {
+  console.log(`  ${problems} possible timing problem(s) above — these are ESTIMATES and run`);
+  console.log('  up to ~1.5s short of the real thing. Render, then `--verify` for the truth.');
+}
 
 if (!creds) process.exit(problems ? 1 : 0);
 
@@ -233,7 +276,7 @@ const filter = rendered
   // on, and identical whichever voice the script is rendered in.
   `[mix]apad,atrim=0:${trackEnd.toFixed(3)},loudnorm=I=-16:TP=-1.5:LRA=9,aresample=48000[out]`;
 
-const m4a = join(OUT_DIR, 'narration.m4a');
+const m4a = join(OUT_DIR, 'narration.voice.m4a');
 execFileSync('ffmpeg', [
   '-y', '-hide_banner', '-loglevel', 'error',
   ...inputs, '-filter_complex', filter, '-map', '[out]',
@@ -251,3 +294,5 @@ writeFileSync(join(OUT_DIR, 'narration.json'), JSON.stringify({
 rmSync(WORK, { recursive: true, force: true });
 console.log(`\n  ${m4a}  ${mmss(ffprobe(m4a))}  ${voice}`);
 console.log(`  ${join(OUT_DIR, 'narration.json')}  (transcript, for the record)`);
+console.log('\n  Voice only. Run `node tools/score.mjs` to add the music bed and');
+console.log('  produce assets/narration.m4a, which is what the page plays.\n');

@@ -12,7 +12,9 @@
     "check:full": "node tools/check-playback.mjs --full",
     "narrate": "node tools/narrate.mjs",
     "figures": "node tools/narrate.mjs --check",
-    "check:hosted": "node tools/check-hosted.mjs"
+    "check:hosted": "node tools/check-hosted.mjs",
+    "verify": "node tools/narrate.mjs --verify",
+    "score": "node tools/score.mjs"
   },
   "homepage": "https://mafiatun.github.io/opga-welcome/"
 }

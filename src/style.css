@@ -384,7 +384,7 @@ h2 {
 
 .comp-panel { position: absolute; opacity: 0; }
 .comp-panel[data-panel="gender"]   { left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc(var(--u)*54); }
-.comp-panel[data-panel="contract"] { left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc(var(--u)*62); }
+.comp-panel[data-panel="origin"]   { left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc(var(--u)*64); }
 .comp-panel[data-panel="groups"]   { left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc(var(--u)*62); }
 
 .panel-title {
@@ -418,31 +418,49 @@ h2 {
 .split-legend .item.f .pct { color: var(--gold); }
 .split-legend .item.m .pct { color: var(--blue-bright); }
 
-.flowbar {
-  display: flex; height: calc(var(--u) * 5.4);
-  border-radius: calc(var(--u) * 0.5);
-  overflow: hidden;
-  margin-bottom: calc(var(--u) * 2.4);
+.origin-rows {
+  display: flex; align-items: flex-start; justify-content: center;
+  gap: calc(var(--u) * 5);
+  margin-bottom: calc(var(--u) * 3);
 }
-.flowbar .seg {
-  position: relative;
-  width: 0;
-  display: grid; place-items: center;
-  will-change: width;
+.origin-block { text-align: center; opacity: 0; min-width: calc(var(--u) * 20); }
+.origin-block .on {
+  font-size: calc(var(--u) * 6.4); font-weight: 200;
+  line-height: 0.95; letter-spacing: -0.04em;
 }
-.flowbar .seg .segn {
-  font-size: calc(var(--u) * 1.5); font-weight: 400;
-  color: var(--space); mix-blend-mode: normal; opacity: 0;
+.origin-block:first-child .on { color: var(--gold); }
+.origin-block:last-child .on  { color: var(--blue-bright); }
+.origin-block .ol {
+  margin-top: calc(var(--u) * 0.9);
+  font-size: calc(var(--u) * 1.05); font-weight: 400;
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--paper);
 }
-.flowbar-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--u) * 2.4); }
-.flowbar-legend .li { display: flex; align-items: center; gap: calc(var(--u) * 0.6); opacity: 0; }
-.flowbar-legend .sw { width: calc(var(--u)*0.72); height: calc(var(--u)*0.72); border-radius: 2px; }
-.flowbar-legend .lt {
-  font-size: calc(var(--u) * 0.95); font-weight: 300;
+.origin-block .os {
+  margin-top: calc(var(--u) * 0.45);
+  font-size: calc(var(--u) * 0.9); font-weight: 300;
   letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim);
 }
+.origin-div {
+  width: 1px; align-self: stretch;
+  background: linear-gradient(180deg, transparent, var(--hair), transparent);
+  opacity: 0; transform-origin: center;
+}
 
-/* Top-aligned: label wrapping varies, and flex-end would stagger the rings. */
+.origin-flags {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: calc(var(--u) * 0.85);
+  margin-bottom: calc(var(--u) * 2.4);
+}
+.oflag { font-size: calc(var(--u) * 1.9); line-height: 1; opacity: 0; }
+
+.origin-line {
+  text-align: center;
+  font-size: calc(var(--u) * 1.5); font-weight: 250;
+  letter-spacing: -0.005em; color: var(--dim); opacity: 0;
+  line-height: 1.5;
+}
+.origin-line b { color: var(--paper); font-weight: 300; }
+
 .group-bloom { display: flex; justify-content: center; gap: calc(var(--u) * 3.4); align-items: flex-start; }
 .group-bloom .gb { text-align: center; opacity: 0; }
 .group-bloom .ring {

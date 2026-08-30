@@ -251,35 +251,44 @@ export function buildSplitLegend(host, { F, M }) {
   ];
 }
 
-const CONTRACT_COLORS = {
-  'Secondment': '#009FDB',
-  'Consultant': '#F2B233',
-  'RB':         '#4FC8F5',
-  'XB':         '#1E7FA8',
-  'DGACM':      '#7FD9F7',
-  'GDC':        '#B98A2E',
-  'Not stated': 'rgba(244,249,252,0.22)',
-};
+/**
+ * How we came here. Deliberately not a contract breakdown: governments
+ * released their people to this Office, and the United Nations staffed the
+ * rest. Those are the only two categories anyone in the room needs, and it is
+ * the framing the Office asked for.
+ */
+export function buildOrigin(host, { seconded, un, sendingCountries }) {
+  host.innerHTML = '';
 
-export function buildFlowBar(host, legendHost, byContract) {
-  host.innerHTML = ''; legendHost.innerHTML = '';
-  const total = [...byContract.values()].reduce((a, b) => a + b, 0);
-  const segs = [], legs = [];
-  for (const [name, n] of byContract) {
-    const color = CONTRACT_COLORS[name] || '#4FC8F5';
-    const seg = el('div', 'seg');
-    seg.style.background = color;
-    seg.dataset.pct = ((n / total) * 100).toFixed(2);
-    seg.innerHTML = `<span class="segn">${n}</span>`;
-    host.appendChild(seg);
-    segs.push(seg);
+  const wrap = el('div', 'origin-rows');
+  const block = (n, label, sub) => {
+    const d = el('div', 'origin-block');
+    d.innerHTML = `<div class="on">${n}</div><div class="ol">${label}</div>` +
+                  (sub ? `<div class="os">${sub}</div>` : '');
+    return d;
+  };
+  const a = block(seconded, 'seconded to this Office',
+    `by ${sendingCountries.length} governments`);
+  const b = block(un, 'United Nations colleagues', '&nbsp;');
+  wrap.appendChild(a);
+  wrap.appendChild(el('div', 'origin-div'));
+  wrap.appendChild(b);
+  host.appendChild(wrap);
 
-    const li = el('div', 'li');
-    li.innerHTML = `<span class="sw" style="background:${color}"></span><span class="lt">${name}</span>`;
-    legendHost.appendChild(li);
-    legs.push(li);
-  }
-  return { segs, legs };
+  const flags = el('div', 'origin-flags');
+  sendingCountries.forEach((c) => {
+    const f = el('span', 'oflag', COUNTRIES[c]?.flag || '\u{1F3F3}');
+    f.title = c;
+    flags.appendChild(f);
+  });
+  host.appendChild(flags);
+
+  const line = el('div', 'origin-line',
+    'Governments sent their best people. The United Nations sent its own. ' +
+    '<b>One Office.</b>');
+  host.appendChild(line);
+
+  return { blocks: [a, b], flags: [...flags.children], line, div: wrap.querySelector('.origin-div') };
 }
 
 export function buildGroupBloom(host, byRegionalGroup, total) {

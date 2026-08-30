@@ -117,9 +117,24 @@ of them — check each is the right person and still current before the meeting.
 
 ### The voiceover
 
-A single pre-rendered track, `assets/narration.m4a`, written in
-`data/narration.js` and rendered by `node tools/narrate.mjs`. Nothing is
-synthesised at run time and nothing touches the network during the meeting.
+Two build steps produce one file:
+
+1. `npm run narrate` renders the words in `data/narration.js` into
+   `assets/narration.voice.m4a` — **voice only**.
+2. `npm run score` synthesises the music bed and mixes it under the voice,
+   writing `assets/narration.m4a`, which is what the page plays.
+
+Keeping them separate means re-mixing never layers music on music.
+
+The bed is generated, not licensed, so nothing in the presentation needs
+clearing: a slow four-chord cycle in D minor with sustained pads, a sub and one
+bell per act. ffmpeg ducks it under the voice with a sidechain compressor, so it
+steps back whenever she speaks and swells into the silences — which is what was
+missing when the voice sounded bare. Measured: −23.9 dB under the speech,
+−21.9 dB during it, peaks at −2.9 dB.
+
+Nothing is synthesised at run time and nothing touches the network during the
+meeting.
 
 The voice follows the master timeline rather than being triggered by it: every
 frame it compares itself with `app.tl.time()` and corrects if it has drifted.
@@ -127,8 +142,12 @@ Pause, scene jumps, restart and mute therefore all work without the audio
 needing to know they happened.
 
 Figures spoken aloud are baked into the audio. If the roster changes, run
-`npm run figures` (`node tools/narrate.mjs --check`) — it says which lines have
-gone stale — then re-render with `npm run narrate`.
+`npm run figures` — it says which lines have gone stale — then re-render with
+`npm run narrate && npm run score`.
+
+`npm run verify` reads the rendered durations and reports any line that
+actually overruns the next. The `--dry` estimate is only an estimate and runs
+up to ~1.5s short; `--verify` is the one to trust.
 
 `M` mutes the voice mid-presentation without stopping the picture.
 
@@ -224,7 +243,7 @@ need to know the narration exists.
 | 5 | The people, region by region | 44s |
 | 6 | Languages | 27s |
 | 7 | The President's six priorities | 33s |
-| 8 | Gender, funding, regional groups | 29s |
+| 8 | Gender, how we came here, regional groups | 29s |
 | 9 | Close — everything returns to the mark | 19s |
 
 Stills of each are in `preview/`.
@@ -288,16 +307,15 @@ transcribed from them lives in `data/`.
 
 ## Known limits
 
-- **The roster needs your confirmation.** The directory's own tally reads
-  *Male 13 / Female 21 = 34*, but its tables contain 44 rows. `verify.html`
-  lists every row I inferred rather than read.
+- **One nationality is still unconfirmed** — the roster reads "Ms. Yuan Cheng —
+  China (??)". Everything else was confirmed by the Office on 30 August.
+- **No contract type, grade or funding line appears anywhere on screen**, by
+  request. The composition scene says only how many colleagues governments
+  seconded and how many the United Nations employs.
 - **Five of the six official UN languages** are spoken in the office — Russian is
   the gap. The presentation says so honestly rather than overclaiming, and the
   line updates itself if that changes. The directory's trailing note mentions
   Russia among incoming secondments, which would complete the set.
-- **The vision statement is a candidacy document.** Its cover reads "CANDIDATE
-  FOR PRESIDENT, 81st SESSION". The theme, the six pillars and the President's
-  styling in `data/vision.js` should be checked against the final text.
 - **The "Welcome." card in scene 2 is never seen.** It is set to fade in at
   15.6s into a scene that is 15s long, so it reveals after its own container
   has been hidden. Either lengthen scene 2 in `SCENE_LIST` or bring the reveal
