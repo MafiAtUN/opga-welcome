@@ -34,6 +34,23 @@ const BED_WAV = join(WORK, 'score.wav');
 
 const SR = 44100;
 
+// How loud the bed sits against the voice, and how hard it steps back when she
+// speaks. Raising BED lifts the music everywhere; raising DUCK_RATIO pulls it
+// further down under speech, so the two together control "louder in the gaps
+// without crowding the voice". Override from the command line while tuning:
+//   node tools/score.mjs --bed 0.75
+const argOf = (name, fallback) => {
+  const i = process.argv.indexOf(name);
+  return i > -1 && process.argv[i + 1] ? Number(process.argv[i + 1]) : fallback;
+};
+const BED = argOf('--bed', 0.78);
+const DUCK_RATIO = argOf('--duck', 6);
+const DUCK_THRESHOLD = argOf('--threshold', 0.02);
+// Short pauses between sentences are the bulk of the silence. A slow release
+// meant the bed never climbed back during them and the music read as absent;
+// recovering in about a third of a second fills those without pumping.
+const DUCK_RELEASE = argOf('--release', 320);
+
 // ── The piece ───────────────────────────────────────────────────────────────
 
 // Scene boundaries from SCENE_LIST in src/main.js, used to place the bells and
@@ -138,9 +155,15 @@ function render(seconds) {
 
       chord.tones.forEach((f, k) => {
         // Three slightly detuned partials make one voice that breathes.
+        //
+        // They each get their own phase offset. Started together they drift in
+        // and out of alignment as one, which swung the whole bed by five
+        // decibels — loud enough to sound present, then quiet enough to sound
+        // missing. Offsetting them keeps the beating but stops it lining up.
         for (let d = -1; d <= 1; d++) {
           const fd = f * (1 + d * 0.0016);
-          s += Math.sin(2 * Math.PI * fd * t + k) * 0.085 * w * drift(t, k + d + 2);
+          const phase = k * 1.31 + (d + 1) * 2.09;
+          s += Math.sin(2 * Math.PI * fd * t + phase) * 0.085 * w * drift(t, k + d + 2);
         }
         // An octave up, quieter, for air at the top of the chord.
         s += Math.sin(2 * Math.PI * f * 2 * t + k * 1.7) * 0.030 * w * drift(t, k + 7);
@@ -225,7 +248,7 @@ if (process.argv.includes('--music-only')) {
   process.exit(0);
 }
 
-process.stdout.write('  mix     ducking the bed under the voice… ');
+process.stdout.write(`  mix     bed ${BED}, duck ${DUCK_RATIO}:1, release ${DUCK_RELEASE}ms… `);
 ff([
   '-i', VOICE, '-i', BED_WAV,
   '-filter_complex',
@@ -238,14 +261,23 @@ ff([
   // read as a video stream specifier — hence the names.
   '[0:a]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,' +
     'asplit=2[voice][key];' +
+  // dynaudnorm evens the bed out over a long window. A pad built from detuned
+  // partials still wanders a few decibels, and an uneven bed is what "the
+  // music is too low" usually means — it is not too quiet everywhere, it
+  // disappears in places.
   '[1:a]aformat=sample_fmts=fltp:sample_rates=48000:channel_layouts=stereo,' +
-    'volume=0.34[bed];' +
+    'dynaudnorm=f=500:g=31:p=0.85:m=6:s=8,' +
+    `volume=${BED}[bed];` +
   // The bed is compressed by the voice, so it steps back whenever she speaks
   // and swells back in the gaps.
-  '[bed][key]sidechaincompress=threshold=0.02:ratio=8:attack=25:release=700:makeup=1[ducked];' +
+  `[bed][key]sidechaincompress=threshold=${DUCK_THRESHOLD}:ratio=${DUCK_RATIO}` +
+    `:attack=25:release=${DUCK_RELEASE}:makeup=1[ducked];` +
   '[voice][ducked]amix=inputs=2:duration=longest:dropout_transition=0:normalize=0[m];' +
   '[m]afade=t=in:st=0:d=2,afade=t=out:st=' + (voiceSeconds - 3).toFixed(2) + ':d=3,' +
-  'alimiter=limit=0.95,loudnorm=I=-18:TP=-2:LRA=11,' +
+  // -17 rather than -18: the extra music energy made loudnorm pull the whole
+  // mix down, which quietly cost the voice about a decibel it did not need to
+  // lose.
+  'alimiter=limit=0.95,loudnorm=I=-17:TP=-2:LRA=11,' +
   'aformat=sample_rates=48000:channel_layouts=stereo[out]',
   '-map', '[out]', '-c:a', 'aac', '-b:a', '160k', '-ar', '48000', '-ac', '2',
   '-movflags', '+faststart',

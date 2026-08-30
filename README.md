@@ -135,9 +135,25 @@ Keeping them separate means re-mixing never layers music on music.
 The bed is generated, not licensed, so nothing in the presentation needs
 clearing: a slow four-chord cycle in D minor with sustained pads, a sub and one
 bell per act. ffmpeg ducks it under the voice with a sidechain compressor, so it
-steps back whenever she speaks and swells into the silences — which is what was
-missing when the voice sounded bare. Measured: −23.9 dB under the speech,
-−21.9 dB during it, peaks at −2.9 dB.
+steps back whenever she speaks and swells into the silences.
+
+Levels, measured rather than judged by ear: about **−15 dB in the gaps** and
+**−17.7 dB under speech**, against a voice-only reference of −17.7 dB — so the
+music fills the silences without taking anything off the voice. Whole track
+−18.4 dB, peaks −3.8 dB.
+
+Tune it from the command line without editing anything:
+
+```
+node tools/score.mjs --bed 0.9        louder bed (default 0.78)
+node tools/score.mjs --duck 4         ducks less under the voice (default 6)
+node tools/score.mjs --release 500    slower recovery after a line (default 320ms)
+```
+
+The bed passes through `dynaudnorm` before mixing. A pad built from detuned
+partials wanders several decibels as they drift in and out of phase, and an
+uneven bed is usually what "the music is too low" actually means — it is not
+too quiet everywhere, it disappears in places.
 
 Nothing is synthesised at run time and nothing touches the network during the
 meeting.
