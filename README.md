@@ -48,6 +48,16 @@ presentation holds on a **start card** and begins the picture and the voice
 together on the first click. That is why the GitHub Pages link asks for a click
 and the room does not.
 
+The card appears as soon as the picture is ready and the six-megabyte voice
+track keeps downloading behind it, counting up on the card as it goes. Reading
+the card and reaching for the mouse covers most of the download; throttled to
+3 Mbps that is the difference between the card appearing at 5.9s and at 22.3s.
+Clicking before the voice has arrived is safe — the picture is held until it
+has, rather than run against silence.
+
+In the room it still waits: the file is on local disk and loads in a moment,
+and there is no click to hide a wait behind.
+
 ### Before you present
 
 - Open it once on the machine you will actually present from, and let it run

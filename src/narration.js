@@ -50,8 +50,27 @@ export function attachNarration(app, total) {
   // first pause, scene jump or restart would set currentTime and be silently
   // ignored, sending the voice back to zero while the picture carried on.
   // A blob URL is seekable no matter what is serving the folder.
+  // Read it as a stream rather than a single blob() call, so the caller can
+  // report progress. Six megabytes over conference wifi is twenty seconds of
+  // apparently nothing happening, and a number makes that bearable.
+  let onProgress = null;
   const source = fetch('assets/narration.m4a')
-    .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(`HTTP ${r.status}`))))
+    .then(async (r) => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const total = Number(r.headers.get('content-length')) || 0;
+      if (!r.body || !total) return r.blob();          // no stream, no progress
+      const reader = r.body.getReader();
+      const chunks = [];
+      let got = 0;
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        got += value.length;
+        if (onProgress) onProgress(got / total);
+      }
+      return new Blob(chunks, { type: r.headers.get('content-type') || 'audio/mp4' });
+    })
     .then((b) => { audio.src = URL.createObjectURL(b); })
     .catch((e) => {
       console.warn('narration: falling back to streaming —', e.message);
@@ -114,6 +133,9 @@ export function attachNarration(app, total) {
 
     /** True if sound may start unprompted; false if a gesture is required. */
     canAutoplay,
+
+    /** Report download progress, 0..1. Called only while the track is arriving. */
+    onProgress(fn) { onProgress = fn; },
 
     /**
      * Start the voice from inside a real user gesture. Must be called

@@ -109,16 +109,6 @@ async function init() {
   buildTimeline();
   bindKeys();
 
-  // The first line arrives at 5.6s, so wait for the track to be loaded and
-  // seekable rather than starting the run and catching up. The download began
-  // before the globe was built, so by now it is usually already done.
-  boot.textContent = 'Preparing the voice';
-  await app.narration.ready;
-
-  boot.style.transition = 'opacity 0.5s ease';
-  boot.style.opacity = '0';
-  setTimeout(() => boot.remove(), 600);
-
   requestAnimationFrame(render);
 
   // ?t=<seconds> seeks and holds — used for reviewing and screenshotting
@@ -152,11 +142,30 @@ async function init() {
  * probe answers differently depending on whether an audio output device
  * exists — which makes it exactly the wrong thing to depend on.
  */
+function hideBoot() {
+  boot.style.transition = 'opacity 0.5s ease';
+  boot.style.opacity = '0';
+  setTimeout(() => boot.remove(), 600);
+}
+
 async function startRun() {
+  // In the room the file is on local disk and loads in a moment, and there is
+  // no click to hide a wait behind — so wait for it, and be certain sound is
+  // ready before anything runs hands-free.
   if (new URL(location.href).searchParams.has('room')) {
+    boot.textContent = 'Preparing the voice';
+    await app.narration.ready;
+    hideBoot();
     app.tl.play(0);
     return;
   }
+
+  // Hosted, the voice is six megabytes over whatever connection is going. Put
+  // the card up the moment the picture is ready and let the rest arrive behind
+  // it: reading the card and reaching for the mouse covers most of the
+  // download, and on a slow line that is the difference between waiting four
+  // seconds and twenty-two.
+  hideBoot();
 
   const gate = document.createElement('div');
   gate.id = 'startgate';
@@ -165,19 +174,37 @@ async function startRun() {
       '<div class="sg-eyebrow">Office of the President of the General Assembly</div>' +
       '<div class="sg-title">Eighty&#8209;first Session</div>' +
       '<div class="sg-cta">Click to begin</div>' +
-      '<div class="sg-note">4 minutes 53 seconds &middot; with sound</div>' +
+      '<div class="sg-note" id="sgNote">4 minutes 56 seconds &middot; with sound</div>' +
     '</div>';
   document.body.appendChild(gate);
 
-  const go = () => {
-    // Must be synchronous inside the gesture or the browser refuses the audio.
+  const go = async () => {
+    // Claim the gesture synchronously, before any await — a play() that starts
+    // after the handler yields is no longer inside the gesture and is refused.
     app.narration.startFromGesture();
+
+    // Usually already settled. If someone clicks the instant the card appears
+    // on a slow line, hold the picture rather than run it against silence.
+    gate.classList.add('is-waiting');
+    await app.narration.ready;
+    app.narration.startFromGesture();     // line the voice up with t=0
+
     app.tl.play(0);
     gate.classList.add('is-going');
     setTimeout(() => gate.remove(), 700);
   };
   gate.addEventListener('click', go, { once: true });
   addEventListener('keydown', go, { once: true });
+
+  // While the voice is still arriving, say so. Someone who clicks early is
+  // then waiting on something they can see, rather than on nothing.
+  const note = gate.querySelector('#sgNote');
+  const settled = () => { note.textContent = '4 minutes 56 seconds \u00b7 with sound'; };
+  app.narration.onProgress((f) => {
+    if (f >= 1) return settled();
+    note.textContent = `Loading the voice \u2014 ${Math.round(f * 100)}%`;
+  });
+  app.narration.ready.then(settled);
 }
 
 // ── three.js scaffolding ────────────────────────────────────────────────────
