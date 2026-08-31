@@ -11,8 +11,20 @@
 //  to scene 6, R to restart — none of them need to know this file exists.
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** Resync if the voice and the picture are more than this far apart. */
-const DRIFT = 0.25;
+// Sync is corrected by steering the playback rate, not by seeking.
+//
+// Seeking a media element makes the browser re-buffer, and every re-buffer is
+// an audible drop-out — the first version of this seeked whenever drift passed
+// a quarter of a second and produced about twenty of them across the run. A
+// few per cent of playback rate is inaudible by comparison, and `preservesPitch`
+// means it does not even change the pitch of her voice.
+const DEADBAND = 0.06;    // below this, leave it alone rather than hunt
+const NUDGE_MAX = 0.05;   // ±5% — still inaudible, and closes a gap faster.
+                          // A stalled frame loop lets the picture fall behind
+                          // real time while the voice keeps going; 3% took
+                          // half a minute to recover from a heavy scene.
+const NUDGE_GAIN = 0.5;   // how hard to pull toward the timeline
+const JUMP = 0.75;        // beyond this something discontinuous happened: seek
 
 /**
  * Attach the narration to a running presentation.
@@ -26,6 +38,9 @@ export function attachNarration(app, total) {
   const audio = new Audio();
   audio.preload = 'auto';
   audio.volume = 0.95;
+  // Rate changes are time-stretched rather than pitch-shifted, so steering
+  // sync never makes her sound sped up.
+  audio.preservesPitch = true;
 
   // Load the whole track into memory before using it.
   //
@@ -133,16 +148,37 @@ export function attachNarration(app, total) {
         if (audio.paused && audio.currentTime < audio.duration - 0.25) start();
         return;
       }
+
       if (audio.paused) {
-        audio.currentTime = t;
+        // Only move it if it is actually somewhere else. At the top of a run
+        // both are already at zero, and seeking to where you already are still
+        // costs a re-buffer.
+        if (Math.abs(audio.currentTime - t) > DEADBAND) audio.currentTime = t;
+        audio.playbackRate = 1;
         start();
         return;
       }
-      // A seek is asynchronous; without this guard we would re-issue it every
-      // frame until it landed, which stutters the voice.
-      if (!audio.seeking && Math.abs(audio.currentTime - t) > DRIFT) {
+      if (audio.seeking) return;      // a seek is in flight; let it land
+
+      const diff = audio.currentTime - t;    // positive: the voice is ahead
+
+      // Only a jump, a restart or a stall lands here. Seeking is the only way
+      // to cover that much ground, and the drop-out is worth it once.
+      if (Math.abs(diff) > JUMP) {
         audio.currentTime = t;
+        audio.playbackRate = 1;
+        return;
       }
+
+      // Everything else is steered. Within the deadband, do nothing at all —
+      // a permanent offset of a few tens of milliseconds is imperceptible, and
+      // chasing it would leave the rate permanently off 1.
+      if (Math.abs(diff) < DEADBAND) {
+        if (audio.playbackRate !== 1) audio.playbackRate = 1;
+        return;
+      }
+      const nudge = Math.max(-NUDGE_MAX, Math.min(NUDGE_MAX, diff * NUDGE_GAIN));
+      audio.playbackRate = 1 - nudge;
     },
 
     /** M in the room, if the voice is not wanted on a particular run. */

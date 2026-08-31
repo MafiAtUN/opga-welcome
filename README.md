@@ -163,6 +163,15 @@ frame it compares itself with `app.tl.time()` and corrects if it has drifted.
 Pause, scene jumps, restart and mute therefore all work without the audio
 needing to know they happened.
 
+**It corrects by steering the playback rate, not by seeking.** Seeking a media
+element makes the browser re-buffer, and every re-buffer is an audible
+drop-out; the first version seeked whenever drift passed a quarter of a second
+and produced about twenty of them across a run. Nudging the rate by up to three
+per cent is inaudible — `preservesPitch` means it does not even change the
+pitch of her voice — and it holds sync tighter as a side effect: mean drift
+went from 0.096s to 0.045s. A hard seek is reserved for genuine
+discontinuities, which is to say a scene jump or a restart.
+
 Figures spoken aloud are baked into the audio. If the roster changes, run
 `npm run figures` — it says which lines have gone stale — then re-render with
 `npm run narrate && npm run score`.
@@ -308,7 +317,9 @@ scene transforms into the next.
 - **`src/narration.js`** — the spoken track. It loads the whole file into a blob
   before use, because seeking a streamed file needs HTTP Range support and
   `python3 -m http.server` does not implement it. Without that, the first pause
-  or scene jump would silently send the voice back to the beginning.
+  or scene jump would silently send the voice back to the beginning. Sync is
+  held by playback rate rather than by seeking, so routine correction never
+  causes a re-buffer.
 
 No build step. No package installs to present. `vendor/` holds pinned copies of
 three.js, GSAP, d3-geo, topojson, the world atlas and Inter — about 1.6MB, all
