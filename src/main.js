@@ -113,7 +113,37 @@ async function init() {
 
   // ?t=<seconds> seeks and holds — used for reviewing and screenshotting
   // individual moments without waiting through the whole run.
-  const t = new URL(location.href).searchParams.get('t');
+  const params = new URL(location.href).searchParams;
+
+  if (params.has('export')) {
+    // Outright, not faded: the exporter starts capturing as soon as
+    // renderFrame exists, and a half-second fade would tint the opening
+    // frames and leave the word PREPARING across them.
+    boot.remove();
+    app.narration.toggleMute();
+    let cloud = 0;
+    /**
+     * Render exactly the frame at `t`. Called in order, so the timeline's own
+     * callbacks fire as the playhead passes them — which is how the shapes and
+     * the country ignitions arrive, just as they would in playback.
+     */
+    app.renderFrame = (t, dt) => {
+      app.exportTime = t;
+      app.tl.seek(t, false);
+      cloud += app.cloudRot.speed * dt;
+      app.cloudRot.v = cloud;
+      app.field.update(t);
+      app.globeGroup.rotation.x = app.aim.x;
+      app.globeGroup.rotation.y = app.aim.y;
+      app.cloud.update(cloud);
+      updateChrome();
+      app.renderer.render(app.scene, app.camera);
+    };
+    app.renderFrame(0, 0);
+    return;
+  }
+
+  const t = params.get('t');
   if (t !== null) {
     const secs = parseFloat(t) || 0;
     let i = 0;
@@ -122,6 +152,7 @@ async function init() {
     app.tl.seek(secs, true);
     app.tl.pause();
     app.narration.toggleMute();
+    hideBoot();
   } else {
     await startRun();
   }
@@ -232,6 +263,12 @@ function setupThree() {
   Object.assign(app, {
     canvas, renderer, scene, camera, field, globeRoot, globeGroup,
     clock: new THREE.Clock(),
+    // The one time source. Live it is the wall clock. While exporting a video
+    // it is the frame's own position on the timeline, so the particle drift and
+    // the ignition flares are functions of t rather than of when we looked —
+    // frames captured at three per second would otherwise animate ten times
+    // too fast.
+    exportTime: null,
     // The globe's orientation. Tweened by the timeline only — never
     // integrated per-frame, so a seek always reproduces the exact framing
     // and the flat shapes (logo, nebula) always face the camera squarely.
@@ -247,6 +284,8 @@ function setupThree() {
   resize();
   addEventListener('resize', resize);
 }
+
+app.now = () => (app.exportTime !== null ? app.exportTime : app.clock.getElapsedTime());
 
 function resize() {
   const w = innerWidth, h = innerHeight;
@@ -635,7 +674,7 @@ function sceneGlobe(tl, i) {
     if (idx && idx.length) {
       const when = t + per * 0.55;
       app.ignitionSchedule.push({ at: when, idx });
-      tl.call(() => app.field.ignite(idx, app.clock.elapsedTime), null, when);
+      tl.call(() => app.field.ignite(idx, app.now()), null, when);
     }
 
     // Marker, pillar, arc.
@@ -971,7 +1010,7 @@ function prime(i, at = SCENES[i].at) {
   if (i < S.s9) f.uniforms.uLitColor.value.copy(LIT_GOLD);
   // Far enough in the past that the ignition flash has fully decayed. May be
   // negative if the clock has barely started; the shader's sentinel allows it.
-  const settled = app.clock.elapsedTime - 10;
+  const settled = app.now() - 10;
 
   if (i > S.s4) {
     for (const idx of app.indicesByCountry.values()) f.ignite(idx, settled);

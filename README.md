@@ -212,6 +212,34 @@ up to ~1.5s short; `--verify` is the one to trust.
 
 `M` mutes the voice mid-presentation without stopping the picture.
 
+### Exporting it as a video
+
+**`npm run video`** renders the whole thing to `opga-welcome.mp4` — 1080p, 30fps,
+with the voice — in about five minutes.
+
+It is not a screen recording. The run is one scrubbable timeline, so each frame
+is asked for by name and captured as slowly as it needs to be. The output is
+therefore identical whatever the machine was doing: no dropped frames, no
+throttling, and it can be rendered larger than the screen it was captured on.
+The voice is muxed in from the original file rather than recorded, so it is bit
+for bit.
+
+```
+npm run video                                   1080p30, ~136MB, ~5 min
+node tools/export-video.mjs --fps 60            smoother, twice as long
+node tools/export-video.mjs --width 3840        4K
+node tools/export-video.mjs --crf 24            smaller file, slightly softer
+node tools/export-video.mjs --from 85 --to 100  one section, to check
+```
+
+The video runs 5:08 rather than 4:56: the last spoken line carries on over the
+held final card, and the export follows the voice rather than the timeline so
+she is not cut off.
+
+The file is gitignored — GitHub rejects anything over 100MB — so it stays local.
+It is worth having on a memory stick as a fallback: if the room's machine will
+not cooperate on the day, a video always plays.
+
 ### After editing
 
 **`npm run check`** (or `node tools/check-playback.mjs`) drives the real Google

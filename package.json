@@ -14,7 +14,8 @@
     "figures": "node tools/narrate.mjs --check",
     "check:hosted": "node tools/check-hosted.mjs",
     "verify": "node tools/narrate.mjs --verify",
-    "score": "node tools/score.mjs"
+    "score": "node tools/score.mjs",
+    "video": "node tools/export-video.mjs"
   },
   "homepage": "https://mafiatun.github.io/opga-welcome/"
 }

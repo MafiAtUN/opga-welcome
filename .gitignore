@@ -12,3 +12,7 @@ assets/*.docx
 
 # The synthesised bed before mixing — 53MB, regenerate with tools/score.mjs
 .narration-build/
+
+# Exported video. GitHub rejects files over 100MB and this is ~136MB;
+# regenerate with `npm run video`.
+*.mp4
