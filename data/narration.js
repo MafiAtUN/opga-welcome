@@ -171,9 +171,14 @@ export const CUES = [
       'In a system still arguing about who belongs at the peace table, that is worth saying.',
     note: 'the legend appears at 248 — resolution 1325 is in the President’s first pillar' },
   { at: 260.1, text:
-      'Fourteen of us were sent to this work by our own governments — thirteen countries ' +
+      'Fourteen of us were sent to this work by our own governments — governments ' +
       'that could have kept their best people at home.',
-    note: 'the "how we came here" panel; no contract type is named anywhere, by request' },
+    note: 'the "how we came here" panel. Fourteen people came from THIRTEEN ' +
+          'governments, because Japan seconded two. Saying both numbers aloud ' +
+          'made listeners stop and do the arithmetic mid-sentence, so the voice ' +
+          'now says only the number of people and the panel carries the rest: ' +
+          'it shows "14 seconded · by 13 governments" above thirteen flags, ' +
+          'where the difference can be seen instead of worked out.' },
   { at: 268.2, ssml:
       'They work beside twenty colleagues of the United Nations itself. ' +
       '<break time="280ms"/> Different routes in. <break time="260ms"/> One Office.',
@@ -212,6 +217,7 @@ export const SPOKEN_FIGURES = {
   officialLanguagesPresent: 5,
   regionalGroups: 4,
   seconded: 14,
-  sendingCountries: 13,
   unStaff: 20,
+  // sendingCountries (13) is deliberately absent: it is shown on the panel but
+  // no longer spoken, and this list is only for figures the voice says aloud.
 };

@@ -6,7 +6,7 @@
   },
   "timeline": 296,
   "track": 306.66,
-  "renderedAt": "2026-08-30T18:30:06.768Z",
+  "renderedAt": "2026-08-31T03:12:42.774Z",
   "cues": [
     {
       "at": 5.6,
@@ -226,9 +226,9 @@
     },
     {
       "at": 260.1,
-      "dur": 7.5,
-      "text": "Fourteen of us were sent to this work by our own governments — thirteen countries that could have kept their best people at home.",
-      "note": "the \"how we came here\" panel; no contract type is named anywhere, by request"
+      "dur": 7.02,
+      "text": "Fourteen of us were sent to this work by our own governments — governments that could have kept their best people at home.",
+      "note": "the \"how we came here\" panel. Fourteen people came from THIRTEEN governments, because Japan seconded two. Saying both numbers aloud made listeners stop and do the arithmetic mid-sentence, so the voice now says only the number of people and the panel carries the rest: it shows \"14 seconded · by 13 governments\" above thirteen flags, where the difference can be seen instead of worked out."
     },
     {
       "at": 268.2,
