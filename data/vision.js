@@ -40,7 +40,7 @@ export const PGA_CAREER = [
   },
   {
     label: 'United Nations official',
-    sub: 'The Secretariat in New York, and UNCTAD in Geneva',
+    sub: 'The Secretariat in New York and UNCTAD in Geneva',
     src: 'vision',
   },
   {

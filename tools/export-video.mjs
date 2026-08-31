@@ -63,20 +63,25 @@ await sleep(900);
 // ── Open the presentation in export mode ────────────────────────────────────
 // Headed: a real GPU renders each frame in a fraction of the time software
 // rasterisation takes, and the window is never looked at.
-const browser = await chromium.launch({
-  channel: 'chrome',
-  headless: false,
-  args: ['--hide-scrollbars', '--force-device-scale-factor=1', '--mute-audio'],
-});
-const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT } });
 const problems = [];
-page.on('pageerror', (e) => problems.push(e.message));
+let browser, page;
+
+async function openPresentation() {
+  browser = await chromium.launch({
+    channel: 'chrome',
+    headless: false,
+    args: ['--hide-scrollbars', '--force-device-scale-factor=1', '--mute-audio'],
+  });
+  page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT } });
+  page.on('pageerror', (e) => problems.push(e.message));
+  await page.goto(`http://127.0.0.1:${PORT}/index.html?export=1`, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => window.__app?.renderFrame && !document.getElementById('boot'),
+    null, { timeout: 180000, polling: 400 });
+}
 
 console.log(`\n  ${WIDTH}×${HEIGHT} at ${FPS}fps`);
 process.stdout.write('  opening… ');
-await page.goto(`http://127.0.0.1:${PORT}/index.html?export=1`, { waitUntil: 'domcontentloaded' });
-await page.waitForFunction(() => window.__app?.renderFrame && !document.getElementById('boot'),
-  null, { timeout: 180000, polling: 400 });
+await openPresentation();
 
 const total = await page.evaluate(() => window.__app.tl.duration());
 
@@ -122,15 +127,45 @@ ff.stdin.on('error', (e) => {
 const started = Date.now();
 let wrote = 0;
 
+let restarts = 0;
+
+/**
+ * Draw and capture one frame.
+ *
+ * Chrome has died part-way through a render more than once — a ten-minute job
+ * should not be lost to that. Reopen and carry on from the same frame; the
+ * timeline is addressed by time, so a fresh page resumes exactly where the old
+ * one left off with nothing to reconcile.
+ */
+async function captureFrame(t) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await page.evaluate(([tt, dt]) => window.__app.renderFrame(tt, dt), [t, 1 / FPS]);
+      // Must be a page screenshot, not canvas.toDataURL. Only the globe and
+      // the particles live in the canvas; every word — titles, the career
+      // list, the ticker, the panels, the pillar cards — is DOM layered above
+      // it. Reading the canvas alone produced a film with no text in it.
+      return await page.screenshot({ type: 'jpeg', quality: 95, timeout: 60000 });
+    } catch (e) {
+      if (attempt >= 4) throw new Error(`frame at ${mmss(t)} after 4 tries: ${e.message}`);
+      const gone = /closed|crash|Target/i.test(e.message);
+      process.stdout.write(`\n  ${gone ? 'browser went away' : 'frame was slow'} at ${mmss(t)}; ` +
+                           `${gone ? 'reopening' : 'retrying'} (${attempt}/4)\n`);
+      if (gone) {
+        restarts++;
+        try { await browser.close(); } catch {}
+        await sleep(1200);
+        await openPresentation();
+      } else {
+        await sleep(1500);
+      }
+    }
+  }
+}
+
 for (let i = 0; i < frames; i++) {
   const t = FROM + i / FPS;
-  await page.evaluate(([tt, dt]) => window.__app.renderFrame(tt, dt), [t, 1 / FPS]);
-
-  // Must be a page screenshot, not canvas.toDataURL. Only the globe and the
-  // particles live in the canvas; every word — titles, the career list, the
-  // country ticker, the panels, the pillar cards — is DOM layered above it.
-  // Reading the canvas alone produced a five-minute film with no text in it.
-  const buf = await page.screenshot({ type: 'jpeg', quality: 95 });
+  const buf = await captureFrame(t);
   if (!ff.stdin.write(buf)) await new Promise((r) => ff.stdin.once('drain', r));
   wrote++;
 
@@ -151,7 +186,8 @@ await new Promise((r) => ff.on('close', r));
 await browser.close();
 shutdown();
 
-console.log(`\n\n  wrote ${wrote} frames in ${mmss((Date.now() - started) / 1000)}`);
+console.log(`\n\n  wrote ${wrote} frames in ${mmss((Date.now() - started) / 1000)}` +
+  (restarts ? `  (recovered from ${restarts} browser restart${restarts > 1 ? 's' : ''})` : ''));
 if (problems.length) problems.slice(0, 5).forEach((p) => console.log(`  page error: ${p}`));
 
 const probe = (f, s) => execFileSync('ffprobe',
