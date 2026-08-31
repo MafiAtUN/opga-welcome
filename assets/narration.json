@@ -5,102 +5,102 @@
     "pitch": "0%"
   },
   "timeline": 296,
-  "track": 306.66,
-  "renderedAt": "2026-08-31T03:12:42.774Z",
+  "track": 308.13,
+  "renderedAt": "2026-08-31T03:36:42.625Z",
   "cues": [
     {
       "at": 5.6,
-      "dur": 9.31,
+      "dur": 9.43,
       "text": "Eighty years ago, in San Francisco, fifty nations signed a charter that opened with three words. We the peoples.",
       "note": "the field is still finding its shape; nothing on screen yet but dust"
     },
     {
-      "at": 17,
-      "dur": 3.99,
-      "text": "Everything since has been an argument about whether we meant them.",
-      "note": "lands under the title block, before it lifts away"
+      "at": 15.4,
+      "dur": 6.94,
+      "text": "Everything since has been an argument about whether we meant them. This is the eighty-first session of that argument.",
+      "note": "lands under the title block, which reads Eighty-first Session on screen"
     },
     {
       "at": 23.4,
-      "dur": 4.13,
+      "dur": 4.11,
       "text": "We work for a President who has spent his life inside this system.",
       "note": "his name has just resolved; the career list begins at 25.0"
     },
     {
       "at": 28.3,
-      "dur": 6.67,
+      "dur": 6.77,
       "text": "A career diplomat. An academic. A United Nations official in New York and Geneva.",
       "note": "the first three posts arrive at 25.0, 27.4 and 29.7 — UNCTAD is on screen"
     },
     {
       "at": 35.5,
-      "dur": 5.28,
+      "dur": 5.31,
       "text": "Adviser to the interim government of Bangladesh. Then its Foreign Minister.",
       "note": "those two land at 34.4 and 36.7"
     },
     {
       "at": 41.3,
-      "dur": 4.23,
+      "dur": 4.18,
       "text": "And then elected by the Member States to preside over this Assembly.",
       "note": "the last line of the list, in gold, at 39.1"
     },
     {
       "at": 46,
-      "dur": 5.44,
+      "dur": 5.46,
       "text": "Every President chooses a theme. It is not a slogan. It is a job description.",
       "note": "the career lifts away at 43; the theme headline resolves from 45"
     },
     {
       "at": 52,
-      "dur": 7.29,
+      "dur": 7.28,
       "text": "Restoring trust. Managing transformation. A United Nations that delivers for all.",
       "note": "runs a moment past the scene, landing under the first welcome words"
     },
     {
       "at": 60.2,
-      "dur": 4.52,
+      "dur": 4.65,
       "text": "An office like this one is built from nothing, in a matter of weeks.",
       "note": "the logo dissolves; the ring of scripts begins to arrive"
     },
     {
       "at": 65.3,
-      "dur": 6.33,
+      "dur": 6.43,
       "text": "Strangers arrive from twenty-five countries and are asked, immediately, to work as one.",
       "note": "the words are cycling through the office’s own languages"
     },
     {
       "at": 72.3,
-      "dur": 3.82,
+      "dur": 4.07,
       "text": "So we start where the Assembly starts. With welcome.",
       "note": "the words bloom together and hand over"
     },
     {
       "at": 77.9,
-      "dur": 4.65,
+      "dur": 4.84,
       "text": "Nine teams — and not one of them can finish a day’s work without another.",
       "note": "the second counter"
     },
     {
       "at": 83.4,
-      "dur": 2.7,
+      "dur": 2.67,
       "text": "And twenty-five places we call home.",
       "note": "the third counter, handing off to the globe"
     },
     {
       "at": 87.3,
-      "dur": 2.72,
+      "dur": 2.63,
       "text": "This is where the people in this room come from.",
       "note": "the nebula folds into the Earth"
     },
     {
       "at": 92.5,
-      "dur": 7.27,
+      "dur": 7.08,
       "text": "Not an abstraction. A childhood. A first language. A reason someone came into this work.",
       "note": "ignition begins — Canada first, then west to east"
     },
     {
       "at": 102,
-      "dur": 6.21,
+      "dur": 6.02,
       "text": "Some of us come from countries that have sent hundreds of thousands of peacekeepers into other people’s wars.",
       "note": "the Americas and West Africa are alight"
     },
@@ -112,13 +112,13 @@
     },
     {
       "at": 120.8,
-      "dur": 4.69,
+      "dur": 5.2,
       "text": "Some from countries sheltering more than a million people who could not go home.",
       "note": "South Asia is lighting up"
     },
     {
       "at": 128.8,
-      "dur": 5.86,
+      "dur": 5.96,
       "text": "Every one of them sends a line back to New York. Not one of us arrived here by accident.",
       "note": "the arcs are the point of the scene"
     },
@@ -130,133 +130,133 @@
     },
     {
       "at": 146.2,
-      "dur": 3.54,
+      "dur": 3.62,
       "text": "Twenty-five nations. One Assembly.",
       "note": "the closing card appears at 133"
     },
     {
       "at": 154.7,
-      "dur": 3.99,
+      "dur": 3.68,
       "text": "Now the harder thing to put on a map. The people.",
       "note": "the globe slides right; the first cards come in"
     },
     {
       "at": 159.5,
-      "dur": 2.45,
+      "dur": 2.47,
       "text": "We are an intergenerational team.",
       "note": "the first region’s cards are on screen"
     },
     {
       "at": 162.7,
-      "dur": 7.2,
+      "dur": 7.26,
       "text": "Colleagues in their mid-twenties, working beside people who were negotiating in this building before the youngest of us were born.",
       "note": "the sweep moves through the middle regions"
     },
     {
       "at": 170.8,
-      "dur": 8.32,
+      "dur": 8.4,
       "text": "One brings the assumption that all of this could work better. The other knows exactly why it does not — and how to move it anyway.",
       "note": "the point of the scene: neither half is the junior partner"
     },
     {
       "at": 179.8,
-      "dur": 7.96,
+      "dur": 8.17,
       "text": "And there is no flag to defend at this desk. Only a hundred and ninety-three Member States who have to be able to trust us equally.",
       "note": "the President’s own commitment: everyone’s President, without fear or favour"
     },
     {
       "at": 193.6,
-      "dur": 9.85,
+      "dur": 9.66,
       "text": "Multilingualism is not decoration here. It sits in the President’s mandate, next to gender parity, geographic balance and accessibility.",
       "note": "the word cloud rises out of the dust"
     },
     {
       "at": 204.4,
-      "dur": 5.36,
+      "dur": 5.44,
       "text": "It is the difference between a delegation being heard and a delegation being handled.",
       "note": "the cloud is at its fullest"
     },
     {
       "at": 212.2,
-      "dur": 2.98,
+      "dur": 2.88,
       "text": "Nineteen languages, in one office.",
       "note": "the number resolves at 205.6"
     },
     {
       "at": 215.7,
-      "dur": 5.12,
+      "dur": 5.51,
       "text": "Five of the six official languages of the United Nations are already in this room.",
       "note": "the on-screen line names them; the voice does not repeat the list"
     },
     {
       "at": 221.6,
-      "dur": 3.23,
+      "dur": 3.2,
       "text": "Six pillars. This is the actual work.",
       "note": "the first cards are landing"
     },
     {
       "at": 225.7,
-      "dur": 7.22,
+      "dur": 7.35,
       "text": "Peace that is prevented rather than ended. Development that reaches the countries everyone else forgets.",
       "note": "pillars I and II, as all six settle into place"
     },
     {
       "at": 234.3,
-      "dur": 7.56,
+      "dur": 7.6,
       "text": "A planet we are holding in trust for people who are not born yet. Rights defended in the small places, close to home.",
       "note": "pillars III and IV — Kofi Annan and Eleanor Roosevelt, both quoted in the vision statement"
     },
     {
       "at": 242.4,
-      "dur": 6.95,
+      "dur": 7.09,
       "text": "Technology governed rather than merely adopted. And an Assembly willing to reform itself.",
       "note": "pillars V and VI, on the hold before the cards lift"
     },
     {
       "at": 250.5,
-      "dur": 3.12,
+      "dur": 2.98,
       "text": "Sixty-five per cent of this Office is women.",
       "note": "the glyph field fills in"
     },
     {
       "at": 254.1,
-      "dur": 5.32,
+      "dur": 5.27,
       "text": "In a system still arguing about who belongs at the peace table, that is worth saying.",
       "note": "the legend appears at 248 — resolution 1325 is in the President’s first pillar"
     },
     {
       "at": 260.1,
-      "dur": 7.02,
+      "dur": 7.14,
       "text": "Fourteen of us were sent to this work by our own governments — governments that could have kept their best people at home.",
       "note": "the \"how we came here\" panel. Fourteen people came from THIRTEEN governments, because Japan seconded two. Saying both numbers aloud made listeners stop and do the arithmetic mid-sentence, so the voice now says only the number of people and the panel carries the rest: it shows \"14 seconded · by 13 governments\" above thirteen flags, where the difference can be seen instead of worked out."
     },
     {
       "at": 268.2,
-      "dur": 7.57,
+      "dur": 7.61,
       "text": "They work beside twenty colleagues of the United Nations itself. Different routes in. One Office.",
       "note": "both figures on screen; the flags of the sending countries are landing"
     },
     {
       "at": 276.3,
-      "dur": 5.85,
+      "dur": 5.66,
       "text": "Four of the five regional groups are already here. We speak for all five.",
       "note": "the regional bloom opens at 264.3 — Eastern Europe is the group we are missing"
     },
     {
       "at": 282.7,
-      "dur": 7.19,
+      "dur": 6.92,
       "text": "Hammarskjöld said this Organization was not built to bring us to heaven. It was built to save us from hell.",
       "note": "the field is folding back into the mark"
     },
     {
       "at": 290.4,
-      "dur": 5.5,
-      "text": "That is the work. Welcome to the Office of the President of the General Assembly.",
+      "dur": 6.73,
+      "text": "That is the work. Welcome to the Office of the President of the General Assembly, eighty-first session.",
       "note": "the closing title reveals from 279.8"
     },
     {
-      "at": 296.4,
-      "dur": 9.06,
+      "at": 297.7,
+      "dur": 9.23,
       "text": "Multilateralism is not only relevant. It is indispensable to a future of peace, dignity, and prosperity for all.",
       "note": "the vision statement’s own last sentence, spoken over the held final card after the timeline has come to rest"
     }

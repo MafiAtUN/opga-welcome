@@ -81,14 +81,23 @@ function credentials() {
 
 const escape = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-/** Wrap a cue's body in the document Azure expects. `ssml` is passed through. */
+/**
+ * Wrap a cue's body in the document Azure expects. `ssml` is passed through.
+ *
+ * The <lang> element is not decoration. The voice is a *multilingual* one, and
+ * those detect language per phrase rather than per request — so a short
+ * fragment between two breaks gets judged on its own. "Different routes in."
+ * came back in a French accent, which is a fair reading of those words in
+ * isolation. Pinning en-US inside the voice stops it guessing.
+ */
 function ssmlFor(cue, v) {
   const body = cue.ssml ?? escape(cue.text);
   return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" ` +
          `xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="en-US">` +
          `<voice name="${v}">` +
+         `<lang xml:lang="en-US">` +
          `<prosody rate="${PROSODY.rate}" pitch="${PROSODY.pitch}">${body}</prosody>` +
-         `</voice></speak>`;
+         `</lang></voice></speak>`;
 }
 
 async function synthesize(ssml, { key, region }, file) {

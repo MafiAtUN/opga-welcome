@@ -45,8 +45,10 @@ export const CUES = [
       'Eighty years ago, in San Francisco, fifty nations signed a charter ' +
       'that opened with three words. <break time="420ms"/> We the peoples.',
     note: 'the field is still finding its shape; nothing on screen yet but dust' },
-  { at:    17, text: 'Everything since has been an argument about whether we meant them.',
-    note: 'lands under the title block, before it lifts away' },
+  { at:  15.4, text:
+      'Everything since has been an argument about whether we meant them. ' +
+      'This is the eighty-first session of that argument.',
+    note: 'lands under the title block, which reads Eighty-first Session on screen' },
 
   // 1 · The President, and his theme ─────────────────────────── 22–58 ──
   //     The list on screen carries the detail; the voice carries the shape of
@@ -194,9 +196,10 @@ export const CUES = [
       '<break time="320ms"/> It was built to save us from hell.',
     note: 'the field is folding back into the mark' },
   { at: 290.4, text:
-      'That is the work. Welcome to the Office of the President of the General Assembly.',
+      'That is the work. Welcome to the Office of the President of the ' +
+      'General Assembly, eighty-first session.',
     note: 'the closing title reveals from 279.8' },
-  { at: 296.4, ssml:
+  { at: 297.7, ssml:
       'Multilateralism is not only relevant. <break time="260ms"/> ' +
       'It is indispensable to a future of peace, dignity, and prosperity for all.',
     note: 'the vision statement’s own last sentence, spoken over the held final card ' +
