@@ -58,6 +58,26 @@ has, rather than run against silence.
 In the room it still waits: the file is on local disk and loads in a moment,
 and there is no click to hide a wait behind.
 
+### Which browser
+
+**Use Chrome, and plug the machine in.** That is the tested path, and the only
+one the checks in `tools/` run against.
+
+Safari works but the voice sits about four tenths of a second behind the
+picture. Its `preservesPitch` time-stretcher buffers, so the element reports a
+position behind where the sound actually is — and correcting for that phantom
+gap keeps the stretcher engaged, which sustains it. The first version of the
+rate steering fell straight into that loop and left the voice running five per
+cent fast for the whole run. It now notices when steering is not working, stops,
+and leaves the clock alone; the residual offset is WebKit's own output latency
+and cannot be corrected from JavaScript without knowing whether it is real or
+only reported.
+
+On battery, macOS throttles the GPU hard enough to matter. The presentation
+eases its own rendering down if frames get slow — pixel ratio 2 → 1.5 → 1.25 → 1,
+which quarters the fill cost of sixteen thousand additively blended points — but
+it is giving up sharpness to stay smooth, and it should not have to.
+
 ### Before you present
 
 - Open it once on the machine you will actually present from, and let it run

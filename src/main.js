@@ -240,6 +240,8 @@ function setupThree() {
     // tween's onUpdate, because seeking suppresses callbacks — otherwise a
     // jumped-to scene would show a stale figure.
     counters: [],
+    // Rendering eases itself down if frames get slow. See trackQuality().
+    quality: { step: 0, samples: [], lastCheck: 0 },
     cloudRot: { v: 0, speed: 0 },
   });
   resize();
@@ -900,6 +902,7 @@ function render() {
   last = t;
 
   app.field.update(t);
+  trackQuality(t, dt * 1000);
   updateChrome();
 
   if (!app.tl.paused()) app.cloudRot.v += app.cloudRot.speed * dt;
@@ -911,6 +914,41 @@ function render() {
 
   if (app.debugOn) updateDebug(t);
   app.renderer.render(app.scene, app.camera);
+}
+
+// The presentation may end up on a machine nobody tested: a different browser,
+// an external 4K display, or simply a laptop on battery, where macOS throttles
+// the GPU hard. Rather than assume the room's conditions, watch the frame times
+// and give back resolution until it keeps up. Halving the pixel ratio quarters
+// the fill cost, and this scene is fill-bound — sixteen thousand additively
+// blended points.
+//
+// It only ever steps down. Stepping back up on a brief recovery would oscillate,
+// and a presentation that visibly changes quality twice is worse than one that
+// settled slightly softer and stayed there.
+const QUALITY_STEPS = [2, 1.5, 1.25, 1];
+const SLOW_FRAME_MS = 22;        // below ~45fps
+const QUALITY_WINDOW = 2;        // seconds of evidence before acting
+
+function trackQuality(now, frameMs) {
+  const q = app.quality;
+  q.samples.push(frameMs);
+  if (now - q.lastCheck < QUALITY_WINDOW) return;
+  q.lastCheck = now;
+
+  const sorted = q.samples.sort((a, b) => a - b);
+  const median = sorted[Math.floor(sorted.length / 2)] ?? 0;
+  q.samples = [];
+
+  if (median <= SLOW_FRAME_MS || q.step >= QUALITY_STEPS.length - 1) return;
+
+  q.step++;
+  const ratio = Math.min(devicePixelRatio, QUALITY_STEPS[q.step]);
+  app.renderer.setPixelRatio(ratio);
+  app.renderer.setSize(innerWidth, innerHeight, false);
+  app.field.uniforms.uPixelRatio.value = ratio;
+  flashDebug(`eased to ${ratio}x — frames were ${median.toFixed(0)}ms`);
+  console.info(`[opga] frames at ${median.toFixed(0)}ms; eased rendering to ${ratio}x`);
 }
 
 function currentSceneIndex() {

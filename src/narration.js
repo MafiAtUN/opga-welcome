@@ -25,6 +25,17 @@ const NUDGE_MAX = 0.05;   // ±5% — still inaudible, and closes a gap faster.
                           // half a minute to recover from a heavy scene.
 const NUDGE_GAIN = 0.5;   // how hard to pull toward the timeline
 const JUMP = 0.75;        // beyond this something discontinuous happened: seek
+const STUBBORN = 0.35;    // drift the nudge is evidently failing to close
+const STUBBORN_FOR = 3;   // seconds of failing before one seek is the lesser evil
+// Steering assumes currentTime reports where playback actually is. In WebKit it
+// does not: engaging preservesPitch engages a time-stretcher that buffers, so
+// currentTime reads behind the sound. Correcting for that phantom gap keeps the
+// stretcher engaged, which sustains the gap — a loop that pinned the rate at
+// +5% and left the voice permanently fast. So: check the steering is working,
+// and if it demonstrably is not, stop and leave the clock alone.
+const GIVE_UP_AFTER = 4;  // seconds of steering before judging whether it helped
+const COOLDOWN = 25;      // seconds of not trying again
+const GIVE_UP_LIMIT = 2;  // after this many failures, stop steering for good
 
 /**
  * Attach the narration to a running presentation.
@@ -101,6 +112,8 @@ export function attachNarration(app, total) {
   const start = () => audio.play().catch(() => { blocked = true; hint.hidden = false; });
 
   let muted = false;
+  let stubbornSince = 0;
+  let nudgeSince = 0, nudgeStartDiff = 0, cooldownUntil = 0, giveUps = 0;
 
   /**
    * Ask the browser, before anything starts, whether it will let sound play
@@ -192,13 +205,63 @@ export function attachNarration(app, total) {
         return;
       }
 
+      const now = performance.now() / 1000;
+
+      // Steering was tried and did not work on this engine. Leave the rate at
+      // one and tolerate the offset; a steady tenth of a second nobody can
+      // place beats a voice running measurably fast for five minutes.
+      if (giveUps >= GIVE_UP_LIMIT || now < cooldownUntil) {
+        if (audio.playbackRate !== 1) audio.playbackRate = 1;
+        return;
+      }
+
+      // If the nudge is plainly not closing the gap — a frame loop that keeps
+      // stalling, or an engine that handles playbackRate differently — accept
+      // one seek rather than leave the voice sitting a third of a second out.
+      if (Math.abs(diff) > STUBBORN) {
+        if (!stubbornSince) {
+          stubbornSince = now;
+        } else if (now - stubbornSince > STUBBORN_FOR) {
+          audio.currentTime = t;
+          audio.playbackRate = 1;
+          stubbornSince = 0;
+          return;
+        }
+      } else {
+        stubbornSince = 0;
+      }
+
       // Everything else is steered. Within the deadband, do nothing at all —
       // a permanent offset of a few tens of milliseconds is imperceptible, and
       // chasing it would leave the rate permanently off 1.
       if (Math.abs(diff) < DEADBAND) {
         if (audio.playbackRate !== 1) audio.playbackRate = 1;
+        nudgeSince = 0;
         return;
       }
+      // Is the steering actually earning its keep? Sample the gap when it
+      // starts, and judge it a few seconds later.
+      if (!nudgeSince) {
+        nudgeSince = now;
+        nudgeStartDiff = Math.abs(diff);
+      } else if (now - nudgeSince > GIVE_UP_AFTER) {
+        if (Math.abs(diff) > nudgeStartDiff * 0.7) {
+          audio.playbackRate = 1;
+          cooldownUntil = now + COOLDOWN;
+          nudgeSince = 0;
+          // Twice is enough to conclude it is the engine, not a passing stall.
+          // Retrying every half minute would keep changing her speed slightly,
+          // which is worse than a fixed offset nobody can locate.
+          if (++giveUps >= GIVE_UP_LIMIT) {
+            console.info('[opga] playback-rate sync does not work on this browser; ' +
+                         'leaving the voice alone. Chrome is the tested path.');
+          }
+          return;
+        }
+        nudgeSince = now;
+        nudgeStartDiff = Math.abs(diff);
+      }
+
       const nudge = Math.max(-NUDGE_MAX, Math.min(NUDGE_MAX, diff * NUDGE_GAIN));
       audio.playbackRate = 1 - nudge;
     },
