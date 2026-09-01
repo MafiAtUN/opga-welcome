@@ -187,18 +187,43 @@ h2 {
 .country-ticker { position: relative; height: calc(var(--u) * 8); }
 .ticker-item {
   position: absolute; left: 0; bottom: 0;
-  display: flex; align-items: center; gap: calc(var(--u) * 1.4);
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: calc(var(--u) * 0.85);
   white-space: nowrap; opacity: 0;
   will-change: transform, opacity;
 }
 
-/* The faces of the colleagues from this country, overlapped into a row. */
-.ticker-item .faces { display: flex; align-items: center; }
+.ticker-item .thead { display: flex; align-items: center; }
+.ticker-item .flag { font-size: calc(var(--u) * 2.1); margin-right: calc(var(--u) * 0.75); }
+.ticker-item .cname {
+  font-size: calc(var(--u) * 2.5);
+  font-weight: 250;
+  letter-spacing: -0.012em;
+  line-height: 1.05;
+}
+
+/* One colleague per line, so four names read as four people. */
+.ticker-item .tpeople { display: flex; flex-direction: column; gap: calc(var(--u) * 0.5); }
+.ticker-item .tperson { display: flex; align-items: center; gap: calc(var(--u) * 0.85); }
+.ticker-item .tname {
+  font-size: calc(var(--u) * 0.92);
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.ticker-item .tcount {
+  font-size: calc(var(--u) * 0.92);
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
 .tface {
   position: relative;
-  width: calc(var(--u) * 5.6); height: calc(var(--u) * 5.6);
+  width: calc(var(--u) * 3.1); height: calc(var(--u) * 3.1);
   border-radius: 50%;
-  margin-right: calc(var(--u) * -1.35);   /* overlap */
   overflow: hidden; flex: 0 0 auto;
   display: grid; place-items: center;
   background: linear-gradient(145deg, var(--blue), var(--blue-deep));
@@ -208,28 +233,7 @@ h2 {
 }
 .tface img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .tface .mono {
-  font-size: calc(var(--u) * 1.9); font-weight: 400; color: var(--paper);
-}
-.tface.more {
-  background: rgba(0,58,93,0.9);
-  font-size: calc(var(--u) * 1.15); font-weight: 400; color: var(--blue-bright);
-}
-
-.ticker-item .txt { display: flex; flex-direction: column; gap: calc(var(--u) * 0.3); }
-.ticker-item .flag { font-size: calc(var(--u) * 2.1); margin-right: calc(var(--u) * 0.75); }
-.ticker-item .name {
-  font-size: calc(var(--u) * 2.5);
-  font-weight: 250;
-  letter-spacing: -0.012em;
-  line-height: 1.05;
-  display: flex; align-items: center;
-}
-.ticker-item .who {
-  font-size: calc(var(--u) * 0.92);
-  font-weight: 400;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold);
+  font-size: calc(var(--u) * 1.1); font-weight: 400; color: var(--paper);
 }
 
 .globe-tally {

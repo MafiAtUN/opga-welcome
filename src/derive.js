@@ -160,7 +160,11 @@ export const REGION_SWEEP = [
   { label: 'East Asia',     test: (c) => ['China', 'Japan', 'Republic of Korea'].includes(c) },
   { label: 'Southeast Asia & Oceania', test: (c) => ['Malaysia', 'Indonesia', 'Australia'].includes(c) },
   { label: 'Europe',        test: (c) => ['Germany', 'Spain', 'Norway', 'Ireland', 'United Kingdom', 'Türkiye', 'France', 'Russian Federation'].includes(c) },
-  { label: 'The Americas',  test: (c) => COUNTRIES[c]?.group === 'Latin American and Caribbean Group' || ['United States', 'Canada'].includes(c) },
+  // Split in two: as one bucket the Americas held ten of the thirty-four and
+  // wrapped into a wall of cards while every other panel showed four to six.
+  { label: 'North America', test: (c) => ['United States', 'Canada'].includes(c) },
+  { label: 'Latin America & the Caribbean',
+    test: (c) => COUNTRIES[c]?.group === 'Latin American and Caribbean Group' },
 ];
 
 /** [{ label, people[] }] in sweep order, skipping empty regions. */

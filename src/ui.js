@@ -36,29 +36,91 @@ export function shortName(name) {
 
 // ── 1 · Welcome words ───────────────────────────────────────────────────────
 
+// Words in six scripts at one font size differ in width by a factor of four,
+// so nothing can be placed until each box has been measured. Ring positions
+// computed from the index alone put "Siyakwamukela" and "Selamat datang" on
+// top of each other every time.
+const WORD_GAP_X = 26;
+const WORD_GAP_Y = 14;
+
+/**
+ * Seed the words on a phyllotaxis spiral — which covers a field evenly rather
+ * than banding it into rings — then push overlapping boxes apart until none
+ * collide, keeping every one inside the frame.
+ */
+function layoutWelcomeWords(host, nodes) {
+  const W = host.clientWidth, H = host.clientHeight;
+  if (!W || !H) return;
+
+  // offsetWidth, not getBoundingClientRect: by the time this runs a second
+  // time the timeline has already applied its opening scale(0.72), and a
+  // measured rect would report the shrunken size.
+  const box = nodes.map((n) => ({ w: n.offsetWidth, h: n.offsetHeight }));
+
+  const GOLDEN = Math.PI * (3 - Math.sqrt(5));
+  const cx = W / 2, cy = H / 2, rx = W * 0.40, ry = H * 0.34;
+  const pos = nodes.map((_, i) => {
+    const r = Math.sqrt((i + 0.5) / nodes.length);
+    const a = i * GOLDEN;
+    return { x: cx + Math.cos(a) * r * rx, y: cy + Math.sin(a) * r * ry };
+  });
+
+  const minX = W * 0.03, maxX = W * 0.97;
+  const minY = H * 0.07, maxY = H * 0.90;   // clear of the progress bar
+
+  for (let pass = 0; pass < 300; pass++) {
+    let hits = 0;
+    for (let i = 0; i < pos.length; i++) {
+      for (let j = i + 1; j < pos.length; j++) {
+        const dx = pos[j].x - pos[i].x, dy = pos[j].y - pos[i].y;
+        const needX = (box[i].w + box[j].w) / 2 + WORD_GAP_X;
+        const needY = (box[i].h + box[j].h) / 2 + WORD_GAP_Y;
+        const overX = needX - Math.abs(dx), overY = needY - Math.abs(dy);
+        if (overX <= 0 || overY <= 0) continue;      // already clear on an axis
+        hits++;
+        // Separate along whichever axis is the shorter way out, so a long word
+        // slides sideways past a short one instead of everything drifting down.
+        if (overX / needX < overY / needY) {
+          const push = (overX / 2) * (dx < 0 ? -1 : 1);
+          pos[i].x -= push; pos[j].x += push;
+        } else {
+          const push = (overY / 2) * (dy < 0 ? -1 : 1);
+          pos[i].y -= push; pos[j].y += push;
+        }
+      }
+    }
+    // A word clipped at the frame edge looks broken, so the frame wins.
+    for (let i = 0; i < pos.length; i++) {
+      pos[i].x = Math.min(Math.max(pos[i].x, minX + box[i].w / 2), maxX - box[i].w / 2);
+      pos[i].y = Math.min(Math.max(pos[i].y, minY + box[i].h / 2), maxY - box[i].h / 2);
+    }
+    if (!hits) break;
+  }
+
+  nodes.forEach((n, i) => {
+    n.style.left = `${Math.round(pos[i].x - box[i].w / 2)}px`;
+    n.style.top = `${Math.round(pos[i].y - box[i].h / 2)}px`;
+  });
+}
+
 export function buildWelcomeWords(host, entries) {
   host.innerHTML = '';
-  return entries.map((e, i) => {
+  const nodes = entries.map((e) => {
     const n = el('div', 'welcome-word');
     if (e.rtl) n.dir = 'rtl';
     n.innerHTML = `${e.text}<span class="tag">${e.lang}</span>`;
-    // Three concentric rings rather than one spiral. Words that share a radius
-    // are spaced a full slice apart, and neighbouring indices land on
-    // different rings — so wide words in wide scripts don't collide.
-    // The horizontal reach stays conservative: a word clipped at the frame
-    // edge looks broken, and these vary enormously in width.
-    const RINGS = 3;
-    const ring = i % RINGS;
-    const perRing = Math.ceil(entries.length / RINGS);
-    const slot = Math.floor(i / RINGS);
-    const a = (slot / perRing) * Math.PI * 2 + ring * 0.7 + 0.35;
-    const rad = 0.15 + ring * 0.07;
-    n.style.left = `${50 + Math.cos(a) * rad * 100 * 1.20}%`;
-    n.style.top = `${50 + Math.sin(a) * rad * 100 * 1.25}%`;
-    n.style.transform = 'translate(-50%, -50%)';
     host.appendChild(n);
     return n;
   });
+
+  const relayout = () => layoutWelcomeWords(host, nodes);
+  relayout();
+  // Six scripts means six shapers. A box measured before the system has the
+  // font for Bengali or kana is the wrong size, so measure again once they
+  // have settled — and again if the window changes shape.
+  document.fonts?.ready?.then(relayout);
+  addEventListener('resize', relayout);
+  return nodes;
 }
 
 // ── 2 · Headline numbers ────────────────────────────────────────────────────
@@ -86,35 +148,37 @@ export function counter(node, to, { from = 0 } = {}) {
 // ── 3 · Globe ticker ────────────────────────────────────────────────────────
 
 /**
- * One line of the globe ticker: the faces of the colleagues from that country,
- * then the country and their names. Capped at four portraits so a country like
- * Bangladesh or the United States does not run off the frame.
+ * The globe ticker: one country, and the colleagues who carry it.
+ *
+ * The names stack vertically, one face to a line. Laid out as a row they read
+ * as a single run-on string — four Bangladeshi names separated by dots is a
+ * sentence, not a list — and the line grew wide enough to reach the globe.
+ * Down the left edge each person gets their own line, and the block simply
+ * gets taller as countries get bigger.
  */
-const TICKER_FACES = 4;
-
 export function buildTickerItem(host, country, people) {
   const meta = COUNTRIES[country] || {};
   const n = el('div', 'ticker-item');
 
-  const named = people.filter((p) => p.name);
-  const faces = el('div', 'faces');
-  named.slice(0, TICKER_FACES).forEach((p, i) => {
-    const port = buildPortrait(p, 'tface');
-    // Later portraits sit behind earlier ones, so the overlap reads cleanly.
-    port.style.zIndex = String(TICKER_FACES - i);
-    faces.appendChild(port);
-  });
-  const extra = named.length - TICKER_FACES;
-  if (extra > 0) faces.appendChild(el('div', 'tface more', `+${extra}`));
-  if (named.length) n.appendChild(faces);
+  const head = el('div', 'thead');
+  head.appendChild(el('span', 'flag', meta.flag || '🏳'));
+  head.appendChild(el('span', 'cname', country));
+  n.appendChild(head);
 
-  const txt = el('div', 'txt');
-  txt.appendChild(el('div', 'name', `<span class="flag">${meta.flag || '🏳'}</span>${country}`));
-  const who = named.length
-    ? named.map((p) => shortName(p.name)).join(' · ')
-    : `${people.length} colleague${people.length === 1 ? '' : 's'}`;
-  txt.appendChild(el('div', 'who', who));
-  n.appendChild(txt);
+  const named = people.filter((p) => p.name);
+  if (named.length) {
+    const list = el('div', 'tpeople');
+    named.forEach((p) => {
+      const row = el('div', 'tperson');
+      row.appendChild(buildPortrait(p, 'tface'));
+      row.appendChild(el('span', 'tname', shortName(p.name)));
+      list.appendChild(row);
+    });
+    n.appendChild(list);
+  } else if (people.length) {
+    n.appendChild(el('div', 'tpeople tcount',
+      `${people.length} colleague${people.length === 1 ? '' : 's'}`));
+  }
 
   host.appendChild(n);
   return n;
@@ -147,7 +211,9 @@ export function buildCard(person) {
   n.appendChild(buildPortrait(person));
   const meta2 = el('div', 'meta');
   meta2.appendChild(el('div', 'nm', bareName(person.name)));
-  meta2.appendChild(el('div', 'rl', person.title || ''));
+  // A blank title is deliberate — see data/staff.js, where the roster and a
+  // colleague's own form disagree. Omit the line rather than leave a dead row.
+  if (person.title) meta2.appendChild(el('div', 'rl', person.title));
   n.appendChild(meta2);
   n.appendChild(el('div', 'fl', meta.flag || ''));
   return n;
