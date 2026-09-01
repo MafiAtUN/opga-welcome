@@ -19,6 +19,23 @@ import { PGA, PGA_CAREER, THEME, PILLARS } from '../data/vision.js';
 import * as D from './derive.js';
 
 const gsap = window.gsap;
+
+// Keep the master timeline on real time, whatever the frame rate does.
+//
+// GSAP smooths lag by default: a frame longer than half a second is treated as
+// if only 33ms had passed, so the timeline quietly drops the difference. That
+// is right for a looping animation and wrong for a narrated one. The voice is
+// played by the system clock and does not drop anything, so every smoothed
+// frame left the picture permanently behind it — and the sync correction then
+// closed the gap the only way it could, by seeking, which is audible. One
+// heavy frame in the globe scene cost 0.8s and produced a drop-out mid-line.
+//
+// Without smoothing a heavy frame makes the picture jump forward instead,
+// which nobody notices, and the voice is never interrupted. It also fixes
+// switching away and back: audio keeps playing in a background tab, so on
+// return the picture belongs wherever the voice has got to.
+gsap.ticker.lagSmoothing(0);
+
 const COUNT = 16000;
 
 // ── Scene schedule ──────────────────────────────────────────────────────────

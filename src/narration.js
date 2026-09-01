@@ -27,6 +27,15 @@ const NUDGE_GAIN = 0.5;   // how hard to pull toward the timeline
 const JUMP = 0.75;        // beyond this something discontinuous happened: seek
 const STUBBORN = 0.35;    // drift the nudge is evidently failing to close
 const STUBBORN_FOR = 3;   // seconds of failing before one seek is the lesser evil
+// Both seeks above are guarded by this. A jump and a stall arrive as the same
+// large gap and want opposite treatment: pressing 5, R or ← moves the timeline
+// somewhere else entirely and the voice must follow at once, drop-out and all,
+// whereas a heavy frame leaves the timeline where playback would have put it —
+// the voice is reading the right line, just early — and seeking for that is a
+// drop-out for nothing. They are told apart by comparing how far the timeline
+// moved against how much real time passed: through a stall the two track each
+// other, on a jump they diverge.
+const JUMPED = 0.25;
 // Steering assumes currentTime reports where playback actually is. In WebKit it
 // does not: engaging preservesPitch engages a time-stretcher that buffers, so
 // currentTime reads behind the sound. Correcting for that phantom gap keeps the
@@ -112,6 +121,7 @@ export function attachNarration(app, total) {
   const start = () => audio.play().catch(() => { blocked = true; hint.hidden = false; });
 
   let muted = false;
+  let lastT = 0, lastWall = 0, jumped = false;
   let stubbornSince = 0;
   let nudgeSince = 0, nudgeStartDiff = 0, cooldownUntil = 0, giveUps = 0;
 
@@ -171,6 +181,13 @@ export function attachNarration(app, total) {
       // Pause and mute are obeyed at every moment, including while the last
       // line is still landing over the held final card. Anything else means
       // pressing Space at the very end leaves a voice talking to a still room.
+      // Watch the timeline against the wall clock every frame, including while
+      // paused — otherwise the pause itself reads as a jump on resume.
+      const wall = performance.now() / 1000;
+      jumped = lastWall > 0 && Math.abs((t - lastT) - (wall - lastWall)) > JUMPED;
+      lastT = t;
+      lastWall = wall;
+
       if (app.tl.paused() || muted) {
         if (!audio.paused) audio.pause();
         return;
@@ -197,9 +214,8 @@ export function attachNarration(app, total) {
 
       const diff = audio.currentTime - t;    // positive: the voice is ahead
 
-      // Only a jump, a restart or a stall lands here. Seeking is the only way
-      // to cover that much ground, and the drop-out is worth it once.
-      if (Math.abs(diff) > JUMP) {
+      // Only worth a drop-out if the timeline really did move somewhere else.
+      if (Math.abs(diff) > JUMP && jumped) {
         audio.currentTime = t;
         audio.playbackRate = 1;
         return;
@@ -218,7 +234,7 @@ export function attachNarration(app, total) {
       // If the nudge is plainly not closing the gap — a frame loop that keeps
       // stalling, or an engine that handles playbackRate differently — accept
       // one seek rather than leave the voice sitting a third of a second out.
-      if (Math.abs(diff) > STUBBORN) {
+      if (Math.abs(diff) > STUBBORN && jumped) {
         if (!stubbornSince) {
           stubbornSince = now;
         } else if (now - stubbornSince > STUBBORN_FOR) {
