@@ -16,3 +16,9 @@ assets/*.docx
 # Exported video. GitHub rejects files over 100MB and this is ~136MB;
 # regenerate with `npm run video`.
 *.mp4
+
+# Headshots as they arrived — phone snaps, 2MB PNGs, scans of passport photos.
+# The cropped 512px JPEGs beside them are what the site loads; these are kept
+# on disk only so a crop can be redone, and are 21MB the room never needs.
+assets/photos/_originals/
+assets/photos/untitled folder/

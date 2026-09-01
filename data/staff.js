@@ -83,7 +83,7 @@ export const STAFF = [
   },
   {
     id: 'zaima', name: 'Ms. Zaima Rahman',
-    title: 'Legal Officer',
+    title: 'Legal and Policy Officer',
     team: 'Executive Office',
     countries: ['Bangladesh'], gender: 'F',
     languages: ['Bangla', 'English'],
@@ -103,13 +103,13 @@ export const STAFF = [
   // ── Political Affairs, Peace and Security ─────────────────────────────────────
   {
     id: 'lu', name: 'Mr. Lu Jingchun',
-    title: 'Senior Adviser',
+    title: '',
     team: 'Political Affairs, Peace and Security',
     countries: ['China'], gender: 'M',
     languages: ['Mandarin Chinese', 'English'],
     seconded: true, photo: 'lu.jpg',
     verified: true,
-    note: 'Directory marked "Possible Team Leader??" — confirm whether to show as Team Leader.',
+    note: 'Title left blank: the directory marked him "Possible Team Leader??" and his own form said "Counsellor", his rank at the Mission. No card line until the Office settles it.',
   },
   {
     id: 'tshabalala', name: 'Ms. Thandekile Tshabalala',
@@ -152,12 +152,13 @@ export const STAFF = [
   // ── Sustainable Development, Climate and Countries in Special Situations ──────
   {
     id: 'whyte', name: 'Ms. Kereeta Whyte',
-    title: 'Team Leader · focal point for SIDS',
+    title: '',
     team: 'Sustainable Development, Climate and Countries in Special Situations',
     countries: ['Barbados'], gender: 'F',
     languages: ['English'],
     seconded: false, photo: 'whyte.jpg',
-    verified: true
+    verified: true,
+    note: 'Title left blank: she answered "TBD" on her own form. No card line until the Office settles it.',
   },
   {
     id: 'wallace', name: 'Mr. Eustace Theodore Wallace Jr.',
@@ -191,12 +192,13 @@ export const STAFF = [
   // ── Human Rights and Humanitarian Affairs ─────────────────────────────────────
   {
     id: 'sari', name: 'Ms. Eda Sari',
-    title: 'Senior Adviser',
+    title: '',
     team: 'Human Rights and Humanitarian Affairs',
     countries: ['Türkiye'], gender: 'F',
     languages: ['Turkish', 'English'],
     seconded: true, photo: 'sari.jpg',
-    verified: true
+    verified: true,
+    note: 'Title left blank: her form said "First Secretary", her rank at the Mission, not her role here. No card line until the Office settles it.',
   },
   {
     id: 'havn', name: 'Ms. Anne Havn',
@@ -220,11 +222,10 @@ export const STAFF = [
     id: 'acuna', name: 'Ms. Estefania Acuna Lacarieri',
     title: 'Adviser',
     team: 'Human Rights and Humanitarian Affairs',
-    countries: ['Mexico', 'United States'], gender: 'F',
+    countries: ['Mexico'], gender: 'F',
     languages: ['Spanish', 'English'],
     seconded: false, photo: 'acuna.jpg',
     verified: true,
-    note: 'Dual: Mexican American. Counted under Mexico for regional group; both light up on the globe.',
   },
   {
     id: 'odwyer', name: 'Ms. Caoimhe O\'Dwyer',
@@ -262,8 +263,7 @@ export const STAFF = [
     countries: ['Morocco'], gender: 'F',
     languages: ['Arabic', 'French', 'English'],
     seconded: true, photo: 'benziane.jpg',
-    verified: true,
-    note: 'French is inferred (widely used in Morocco) — confirm with her.',
+    verified: true
   },
   {
     id: 'carlson', name: 'Ms. Carla Maria Carlson Serrano',
@@ -284,8 +284,8 @@ export const STAFF = [
     verified: true
   },
   {
-    id: 'resolus', name: 'Ms. Marie Resolus',
-    title: 'Staff Support',
+    id: 'resolus', name: 'Ms. Marie Iselande Resolus',
+    title: 'Staff Assistant',
     team: 'Reform, Budget and Administration',
     countries: ['Haiti'], gender: 'F',
     languages: ['Haitian Creole', 'French', 'English'],
@@ -299,8 +299,7 @@ export const STAFF = [
     countries: ['China'], gender: 'F',
     languages: ['Mandarin Chinese', 'English'],
     seconded: false, photo: 'yuancheng.jpg',
-    verified: false,
-    note: 'Roster reads "China (??)" — the only nationality still unconfirmed.',
+    verified: true
   },
 
   // ── Communications and Media ──────────────────────────────────────────────────
@@ -315,13 +314,12 @@ export const STAFF = [
   },
   {
     id: 'dalci', name: 'Mr. Emirhan Dalci',
-    title: 'Adviser (social media)',
+    title: 'Communications Adviser',
     team: 'Communications and Media',
-    countries: ['Türkiye', 'Germany'], gender: 'M',
-    languages: ['Turkish', 'German', 'English'],
+    countries: ['Türkiye'], gender: 'M',
+    languages: ['Turkish', 'German', 'English', 'French'],
     seconded: false, photo: 'dalci.jpg',
     verified: true,
-    note: 'Dual: Türkiye and Germany. He identifies as Turkish, so Türkiye leads and carries the regional group; both light up on the globe.',
   },
   {
     id: 'foxen', name: 'Ms. Julia Foxen',
@@ -345,7 +343,7 @@ export const STAFF = [
   },
   {
     id: 'mafizul', name: 'Mr. Mafizul Islam',
-    title: 'Adviser',
+    title: 'Senior Adviser, Data and AI',
     team: 'Digital Innovation and AI',
     countries: ['Bangladesh'], gender: 'M',
     languages: ['Bangla', 'English'],
@@ -361,15 +359,14 @@ export const STAFF = [
     countries: ['Canada'], gender: 'M',
     languages: ['English', 'French'],
     seconded: false, photo: 'mercer.jpg',
-    verified: true,
-    note: 'French is inferred — confirm with him.',
+    verified: true
   },
   {
-    id: 'stephan', name: 'Ms. Katherina Stephan',
+    id: 'stephan', name: 'Ms. Katherine Stephan',
     title: 'Speechwriter',
     team: 'Speechwriting',
     countries: ['United States'], gender: 'F',
-    languages: ['English'],
+    languages: ['English', 'French'],
     seconded: false, photo: 'stephan.jpg',
     verified: true
   },
