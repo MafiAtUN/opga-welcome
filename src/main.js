@@ -391,7 +391,6 @@ function buildDom() {
   app.glyphs = UI.buildGlyphField($('#glyphField'), D.genderSplit);
   app.splitLegend = UI.buildSplitLegend($('#splitLegend'), D.genderSplit);
   app.origin = UI.buildOrigin($('#originPanel'), D.howWeCameHere);
-  app.bloom = UI.buildGroupBloom($('#groupBloom'), D.byRegionalGroup, D.STATS.people);
 
   $('#closingLine').textContent =
     `${D.STATS.countries} nationalities · ${D.STATS.languages} languages · one team`;
@@ -852,11 +851,22 @@ function scenePriorities(tl, i) {
     .set(node, { visibility: 'hidden' }, s.at + s.dur);
 }
 
-// 8 · Composition: gender, funding, regional groups.
+// 8 · Composition: gender, and how we came here.
+//
+// Two panels, not three. The third used to break the Office down by UN
+// regional group, and a ring reading "4" over the African Group is a fact
+// about a 36-person office that reads on a screen as a judgement about it.
+// The claim worth making — that all five groups are now here — is one
+// sentence, and the voice makes it over the close instead.
+//
+// The two remaining panels are timed by hand rather than by equal thirds,
+// because the voice does not divide evenly: gender takes two short lines and
+// "how we came here" takes two long ones, so the second panel holds the
+// screen for half as long again as the first.
 function sceneComposition(tl, i) {
   const s = SCENES[i], node = scenesEl[i];
-  const [pGender, pOrigin, pGroups] = node.querySelectorAll('.comp-panel');
-  const slot = s.dur / 3;
+  const [pGender, pOrigin] = node.querySelectorAll('.comp-panel');
+  const GENDER_FOR = 10.4;      // 249.4 → 259.8, under the two short lines
 
   tl.set(node, { visibility: 'visible', opacity: 1 }, s.at);
 
@@ -870,35 +880,24 @@ function sceneComposition(tl, i) {
         stagger: { each: 0.035, from: 'center' } }, t0 + 0.5)
     .fromTo(app.splitLegend, { opacity: 0, y: 26 },
       { opacity: 1, y: 0, duration: 1.1, stagger: 0.12, ease: 'power3.out' }, t0 + 2.6)
-    .to(pGender, { opacity: 0, y: -30, duration: 0.9, ease: 'power2.in' }, t0 + slot - 1.2);
+    .to(pGender, { opacity: 0, y: -30, duration: 0.9, ease: 'power2.in' }, t0 + GENDER_FOR - 1.2);
 
   // — How we came here
-  const t1 = s.at + slot + 0.2;
+  const t1 = s.at + GENDER_FOR + 0.6;
   tl.fromTo(pOrigin, { opacity: 0 }, { opacity: 1, duration: 0.8 }, t1)
     .fromTo(pOrigin.querySelector('.panel-title'), { opacity: 0, y: 18 },
       { opacity: 1, y: 0, duration: 1 }, t1)
     .fromTo(app.origin.blocks, { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 1.2, stagger: 0.35, ease: 'power3.out' }, t1 + 0.5)
+      { opacity: 1, y: 0, duration: 1.2, stagger: 0.9, ease: 'power3.out' }, t1 + 0.5)
     .fromTo(app.origin.div, { opacity: 0, scaleY: 0 },
-      { opacity: 1, scaleY: 1, duration: 1, ease: 'power2.out' }, t1 + 0.9)
+      { opacity: 1, scaleY: 1, duration: 1, ease: 'power2.out' }, t1 + 1.1)
     .fromTo(app.origin.flags, { opacity: 0, y: 14, scale: 0.6 },
       { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'back.out(2)',
-        stagger: { each: 0.07, from: 'center' } }, t1 + 1.8)
+        stagger: { each: 0.12, from: 'center' } }, t1 + 3.4)
     .fromTo(app.origin.line, { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' }, t1 + 3.0)
-    .to(pOrigin, { opacity: 0, y: -30, duration: 0.9, ease: 'power2.in' }, t1 + slot - 1.2);
-
-  // — Regional groups
-  const t2 = s.at + slot * 2;
-  tl.fromTo(pGroups, { opacity: 0 }, { opacity: 1, duration: 0.8 }, t2)
-    .fromTo(pGroups.querySelector('.panel-title'), { opacity: 0, y: 18 },
-      { opacity: 1, y: 0, duration: 1 }, t2);
-  app.bloom.forEach((b, i) => {
-    tl.fromTo(b.node, { opacity: 0, y: 34, scale: 0.86 },
-        { opacity: 1, y: 0, scale: 1, duration: 1.1, ease: 'power3.out' }, t2 + 0.4 + i * 0.18)
-      .fromTo(b.arc, { strokeDashoffset: 2 * Math.PI * 42 },
-        { strokeDashoffset: b.offset, duration: 1.6, ease: 'power2.out' }, t2 + 0.6 + i * 0.18);
-  });
+      { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' }, t1 + 6.4);
+  // No exit tween of its own: the scene's fade below carries it out, so the
+  // flags are still on screen under the last line about them.
 
   tl.to(node, { opacity: 0, duration: 1.4, ease: 'power2.in' }, s.at + s.dur - 1.6)
     .set(node, { visibility: 'hidden' }, s.at + s.dur);

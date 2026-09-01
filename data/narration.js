@@ -31,6 +31,28 @@ export const VOICE = 'en-US-AvaMultilingualNeural';
 export const PROSODY = { rate: '-7%', pitch: '0%' };
 
 /**
+ * How far ahead of `at` the first syllable of every line is placed, in seconds.
+ *
+ * `at` is the moment the picture arrives. The voice should not arrive with it —
+ * it should arrive a breath before, the way a person starts speaking as they
+ * turn to the screen rather than after it has changed. Without this the words
+ * read as a caption chasing the animation, which is what "the text is coming
+ * earlier than the sound" means: the two were nominally simultaneous, and
+ * simultaneous looks late.
+ *
+ * This is on top of, not instead of, the lead-in trim in tools/narrate.mjs.
+ * Azure returns roughly a tenth of a second of silence before the first
+ * syllable of every cue, and `adelay` was placing the *file* at `at`, so the
+ * voice was already arriving ~100ms after its own mark before this offset
+ * existed. The renderer now trims that silence first, so `at` means the sound,
+ * and then applies this.
+ *
+ * Raise it and she anticipates the picture; drop it to 0 and the two land
+ * together. A tenth of a second either way is the whole usable range.
+ */
+export const LEAD = 0.15;
+
+/**
  * The script. `at` is an absolute position on the master timeline in
  * src/main.js, so the words and the picture are timed together in one place.
  * `note` records what is on screen at that moment, and why the line sits there.
@@ -78,7 +100,7 @@ export const CUES = [
   { at:  60.2, text: 'An office like this one is built from nothing, in a matter of weeks.',
     note: 'the logo dissolves; the ring of scripts begins to arrive' },
   { at:  65.3, text:
-      'Strangers arrive from twenty-five countries and are asked, immediately, to work as one.',
+      'Strangers arrive from twenty-eight countries and are asked, immediately, to work as one.',
     note: 'the words are cycling through the office’s own languages' },
   { at:  72.3, text: 'So we start where the Assembly starts. With welcome.',
     note: 'the words bloom together and hand over' },
@@ -86,7 +108,7 @@ export const CUES = [
   // 3 · The headline numbers ──────────────────────────────────── 53–65 ──
   { at:  77.9, text: 'Nine teams — and not one of them can finish a day’s work without another.',
     note: 'the second counter' },
-  { at:  83.4, text: 'And twenty-five places we call home.',
+  { at:  83.4, text: 'And twenty-eight places we call home.',
     note: 'the third counter, handing off to the globe' },
 
   // ═══ III. Where we come from ═════════════════════════════════════════════
@@ -111,7 +133,7 @@ export const CUES = [
   { at: 137.8, text:
       'Whatever the Assembly argues about this year, someone in this room has lived it.',
     note: 'the last countries ignite; the camera starts to pull back' },
-  { at: 146.2, ssml: 'Twenty-five nations. <break time="300ms"/> One Assembly.',
+  { at: 146.2, ssml: 'Twenty-eight nations. <break time="300ms"/> One Assembly.',
     note: 'the closing card appears at 133' },
 
   // ═══ IV. Who we are to each other ════════════════════════════════════════
@@ -142,11 +164,15 @@ export const CUES = [
   { at: 204.4, text:
       'It is the difference between a delegation being heard and a delegation being handled.',
     note: 'the cloud is at its fullest' },
-  { at: 212.2, text: 'Nineteen languages, in one office.',
+  { at: 212.2, text: 'Twenty-one languages, in one office.',
     note: 'the number resolves at 205.6' },
   { at: 215.7, text:
-      'Five of the six official languages of the United Nations are already in this room.',
-    note: 'the on-screen line names them; the voice does not repeat the list' },
+      'All six official languages of the United Nations are in this room.',
+    note: 'the colleague from the Russian Federation is what makes this sentence true. ' +
+          'Until 1 September it read "five of the six", and the on-screen line ' +
+          'named which five — officialLanguageLine() in src/main.js flips to ' +
+          '"all six" on its own once the data supports it, so the voice and the ' +
+          'screen cannot disagree.' },
 
   // ═══ VI. The work itself ═════════════════════════════════════════════════
   // 7 · The six pillars ─────────────────────────────────────── 212–245 ──
@@ -173,21 +199,28 @@ export const CUES = [
       'In a system still arguing about who belongs at the peace table, that is worth saying.',
     note: 'the legend appears at 248 — resolution 1325 is in the President’s first pillar' },
   { at: 260.1, text:
-      'Fourteen of us were sent to this work by our own governments — governments ' +
+      'Seventeen of us were sent to this work by our own governments — governments ' +
       'that could have kept their best people at home.',
-    note: 'the "how we came here" panel. Fourteen people came from THIRTEEN ' +
-          'governments, because Japan seconded two. Saying both numbers aloud ' +
-          'made listeners stop and do the arithmetic mid-sentence, so the voice ' +
-          'now says only the number of people and the panel carries the rest: ' +
-          'it shows "14 seconded · by 13 governments" above thirteen flags, ' +
-          'where the difference can be seen instead of worked out.' },
+    note: 'the "how we came here" panel, which now has the whole second half of ' +
+          'the scene to itself. Seventeen people came from SIXTEEN governments, ' +
+          'because Japan seconded two. Saying both numbers aloud made listeners ' +
+          'stop and do the arithmetic mid-sentence, so the voice says only the ' +
+          'number of people and the panel carries the rest: it shows ' +
+          '"17 seconded · by 16 governments" above sixteen flags, where the ' +
+          'difference can be seen instead of worked out.' },
   { at: 268.2, ssml:
       'They work beside twenty colleagues of the United Nations itself. ' +
       '<break time="280ms"/> Different routes in. <break time="260ms"/> One Office.',
     note: 'both figures on screen; the flags of the sending countries are landing' },
-  { at: 276.3, text:
-      'Four of the five regional groups are already here. We speak for all five.',
-    note: 'the regional bloom opens at 264.3 — Eastern Europe is the group we are missing' },
+  { at: 276.3, ssml:
+      'Every regional group of this Assembly is now in the room. ' +
+      '<break time="260ms"/> All five.',
+    note: 'there is no longer a panel under this line — the regional breakdown was ' +
+          'taken out, because a ring reading "4" over the African Group is a fact ' +
+          'about a 37-person office that reads on a screen as a judgement about it. ' +
+          'The claim survives as one sentence, spoken over the last of the flags as ' +
+          'the composition scene fades into the close. It reads "four of the five" ' +
+          'until 1 September; the Eastern European Group was the one we were missing.' },
 
   // ═══ VIII. Handing it over ═══════════════════════════════════════════════
   // 9 · Close — everything returns to the mark ──────────────── 274–293 ──
@@ -214,13 +247,13 @@ export const CUES = [
  */
 export const SPOKEN_FIGURES = {
   teams: 9,
-  countries: 25,
-  languages: 19,
+  countries: 28,
+  languages: 21,
   womenPct: 65,
-  officialLanguagesPresent: 5,
-  regionalGroups: 4,
-  seconded: 14,
+  officialLanguagesPresent: 6,
+  regionalGroups: 5,
+  seconded: 17,
   unStaff: 20,
-  // sendingCountries (13) is deliberately absent: it is shown on the panel but
+  // sendingCountries (16) is deliberately absent: it is shown on the panel but
   // no longer spoken, and this list is only for figures the voice says aloud.
 };

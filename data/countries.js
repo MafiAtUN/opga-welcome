@@ -51,15 +51,20 @@ export const COUNTRIES = {
   'United States':           { flag: '🇺🇸', lat: 39.8,  lng: -98.6,  group: G.WEOG,             atlas: 'United States of America', languages: ['English'] },
   'United Kingdom':          { flag: '🇬🇧', lat: 54.0,  lng: -2.5,   group: G.WEOG,             atlas: 'United Kingdom',           languages: ['English'] },
   'Canada':                  { flag: '🇨🇦', lat: 56.1,  lng: -106.3, group: G.WEOG,             atlas: 'Canada',                   languages: ['English', 'French'] },
+  'Thailand':                { flag: '🇹🇭', lat: 15.0,  lng: 101.0,  group: G.ASIA_PACIFIC,     atlas: 'Thailand',                 languages: ['Thai'] },
 
   // Inferred nationalities — see `verified: false` rows in staff.js
   'India':                   { flag: '🇮🇳', lat: 22.4,  lng: 78.9,   group: G.ASIA_PACIFIC,     atlas: 'India',                    languages: ['Hindi'] },
   'Haiti':                   { flag: '🇭🇹', lat: 19.0,  lng: -72.3,  group: G.GRULAC,           atlas: 'Haiti',                    languages: ['Haitian Creole', 'French'] },
 
+  // The Russian Federation arrived on 1 September 2026 and is now a counted
+  // nationality like any other — it is what brings the Office to five regional
+  // groups and to all six official languages.
+  'Russian Federation':      { flag: '🇷🇺', lat: 61.5,  lng: 96.0,   group: G.EASTERN_EUROPEAN, atlas: 'Russia',                   languages: ['Russian'] },
+
   // Listed in the directory's trailing note ("ROK, UK, Russia, USA, México, France").
   // Not attached to any named person yet — excluded from counts until confirmed.
   'Republic of Korea':       { flag: '🇰🇷', lat: 36.5,  lng: 127.9,  group: G.ASIA_PACIFIC,     atlas: 'South Korea',              languages: ['Korean'] },
-  'Russian Federation':      { flag: '🇷🇺', lat: 61.5,  lng: 96.0,   group: G.EASTERN_EUROPEAN, atlas: 'Russia',                   languages: ['Russian'] },
   'Mexico':                  { flag: '🇲🇽', lat: 23.6,  lng: -102.5, group: G.GRULAC,           atlas: 'Mexico',                   languages: ['Spanish'] },
   'France':                  { flag: '🇫🇷', lat: 46.6,  lng: 2.5,    group: G.WEOG,             atlas: 'France',                   languages: ['French'] },
 };
@@ -81,10 +86,12 @@ export const WELCOME_IN = [
   { text: '欢迎',            lang: 'Mandarin Chinese', script: 'han' },
   { text: 'Bienvenue',      lang: 'French',           script: 'latin' },
   { text: 'Bienvenida',     lang: 'Spanish',          script: 'latin' },
+  { text: 'Добро пожаловать', lang: 'Russian',        script: 'cyrillic' },
   { text: 'ようこそ',         lang: 'Japanese',         script: 'kana' },
   { text: 'Hoş geldiniz',   lang: 'Turkish',          script: 'latin' },
   { text: 'Fáilte',         lang: 'Irish',            script: 'latin' },
   { text: 'Selamat datang', lang: 'Malay',            script: 'latin' },
+  { text: 'ยินดีต้อนรับ', lang: 'Thai',             script: 'thai' },
   { text: 'Bem-vindo',      lang: 'Portuguese',       script: 'latin' },
   { text: 'Welkom',         lang: 'Afrikaans',        script: 'latin' },
   { text: 'Siyakwamukela',  lang: 'isiZulu',          script: 'latin' },

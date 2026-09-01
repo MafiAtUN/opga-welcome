@@ -274,26 +274,35 @@ h2 {
   opacity: 0;
 }
 
+/* The column is the left half of the screen; the globe holds the right. The
+   cards were sized to fit six of them in two columns, which made the faces
+   small enough that nobody in the third row of the room could tell who they
+   were looking at. They are now one per row and considerably bigger — a face
+   you can recognise across a conference room, and a name you can read — which
+   the column has space for because the biggest region here is six people. */
+/* The column starts below the region label rather than at the top of the
+   screen: at this size a six-person region is a stack tall enough to reach
+   the label and sit under it. */
 .face-grid {
   position: absolute;
   left: calc(var(--u) * 6);
-  top: 0; bottom: 0;
-  width: calc(var(--u) * 46);
+  top: calc(var(--u) * 10); bottom: calc(var(--u) * 3);
+  width: calc(var(--u) * 42);
 }
 .region-cards {
   position: absolute;
   left: 0; top: 50%;
   transform: translateY(-50%);
   width: 100%;
-  display: flex; flex-wrap: wrap;
-  gap: calc(var(--u) * 1.5);
-  align-content: center;
+  display: flex; flex-direction: column;
+  gap: calc(var(--u) * 1.05);
+  align-items: flex-start;
 }
 
 .card {
   display: flex; align-items: center;
-  gap: calc(var(--u) * 1.15);
-  padding: calc(var(--u) * 0.85) calc(var(--u) * 1.5) calc(var(--u) * 0.85) calc(var(--u) * 0.85);
+  gap: calc(var(--u) * 1.4);
+  padding: calc(var(--u) * 0.6) calc(var(--u) * 2) calc(var(--u) * 0.6) calc(var(--u) * 0.6);
   border-radius: calc(var(--u) * 5);
   background: linear-gradient(100deg, rgba(0,58,93,0.60), rgba(0,26,44,0.34));
   border: 1px solid var(--hair);
@@ -303,7 +312,7 @@ h2 {
 }
 .card .portrait {
   position: relative;
-  width: calc(var(--u) * 3.5); height: calc(var(--u) * 3.5);
+  width: calc(var(--u) * 4.8); height: calc(var(--u) * 4.8);
   border-radius: 50%;
   flex: 0 0 auto;
   overflow: hidden;
@@ -313,27 +322,27 @@ h2 {
 }
 .card .portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .card .portrait .mono {
-  font-size: calc(var(--u) * 1.3);
+  font-size: calc(var(--u) * 1.9);
   font-weight: 400;
   letter-spacing: 0.04em;
   color: var(--paper);
 }
-.card .meta { display: flex; flex-direction: column; gap: calc(var(--u) * 0.16); min-width: 0; }
+.card .meta { display: flex; flex-direction: column; gap: calc(var(--u) * 0.24); min-width: 0; }
 .card .nm {
-  font-size: calc(var(--u) * 1.12);
+  font-size: calc(var(--u) * 1.62);
   font-weight: 400;
   letter-spacing: -0.005em;
   white-space: nowrap;
 }
 .card .rl {
-  font-size: calc(var(--u) * 0.78);
+  font-size: calc(var(--u) * 0.86);
   font-weight: 300;
   letter-spacing: 0.11em;
   text-transform: uppercase;
   color: var(--dim);
   white-space: nowrap;
 }
-.card .fl { margin-left: auto; font-size: calc(var(--u) * 1.3); padding-left: calc(var(--u)*0.7); }
+.card .fl { margin-left: auto; font-size: calc(var(--u) * 1.6); padding-left: calc(var(--u)*0.9); }
 
 /* ── 5 · Languages ────────────────────────────────────────────────────────── */
 
@@ -389,7 +398,6 @@ h2 {
 .comp-panel { position: absolute; opacity: 0; }
 .comp-panel[data-panel="gender"]   { left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc(var(--u)*54); }
 .comp-panel[data-panel="origin"]   { left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc(var(--u)*64); }
-.comp-panel[data-panel="groups"]   { left: 50%; top: 50%; transform: translate(-50%, -50%); width: calc(var(--u)*62); }
 
 .panel-title {
   font-size: calc(var(--u) * 1.05);
@@ -464,25 +472,6 @@ h2 {
   line-height: 1.5;
 }
 .origin-line b { color: var(--paper); font-weight: 300; }
-
-.group-bloom { display: flex; justify-content: center; gap: calc(var(--u) * 3.4); align-items: flex-start; }
-.group-bloom .gb { text-align: center; opacity: 0; }
-.group-bloom .ring {
-  position: relative;
-  width: calc(var(--u) * 9); height: calc(var(--u) * 9);
-  margin: 0 auto calc(var(--u) * 1.1);
-}
-.group-bloom .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.group-bloom .ring .rn {
-  position: absolute; inset: 0; display: grid; place-items: center;
-  font-size: calc(var(--u) * 2.4); font-weight: 250; letter-spacing: -0.02em;
-}
-.group-bloom .gname {
-  font-size: calc(var(--u) * 0.82); font-weight: 400;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(244, 249, 252, 0.66);
-  max-width: calc(var(--u) * 11); margin: 0 auto; line-height: 1.5;
-}
 
 /* ── Chrome ───────────────────────────────────────────────────────────────── */
 

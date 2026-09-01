@@ -52,7 +52,7 @@ const args = process.argv.slice(2);
 const has = (f) => args.includes(f);
 const opt = (f) => { const i = args.indexOf(f); return i < 0 ? null : args[i + 1]; };
 
-const { CUES, VOICE, PROSODY, SPOKEN_FIGURES } = await import(join(ROOT, 'data/narration.js'));
+const { CUES, VOICE, PROSODY, SPOKEN_FIGURES, LEAD } = await import(join(ROOT, 'data/narration.js'));
 const voice = opt('--voice') || VOICE;
 
 // ── Credentials ─────────────────────────────────────────────────────────────
@@ -120,6 +120,32 @@ const ffprobe = (f) => parseFloat(execFileSync('ffprobe', [
   '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', f,
 ], { encoding: 'utf8' }).trim());
 
+/**
+ * Cut the silence Azure puts in front of the first syllable.
+ *
+ * Every cue comes back with roughly 80–110ms of room tone before she starts,
+ * and `adelay` below places the START OF THE FILE at the cue's `at`. So the
+ * words were consistently arriving about a tenth of a second after the moment
+ * they were written for — every line, all the way through. On its own that is
+ * subtle; under a picture that changes exactly on `at` it is the difference
+ * between the voice leading the screen and the voice explaining it.
+ *
+ * Trimming here rather than in the assembly filter means `dur` is measured on
+ * the trimmed file, so the timing report and `--verify` describe the track that
+ * actually gets built. 20ms of the silence is kept so a soft opening consonant
+ * — the "f" of "Fourteen", the "h" of "Hammarskjöld" — is not clipped by the
+ * gate itself.
+ */
+function trimLeadIn(src, dst) {
+  execFileSync('ffmpeg', [
+    '-y', '-hide_banner', '-loglevel', 'error', '-i', src,
+    '-af', 'silenceremove=start_periods=1:start_threshold=-50dB:' +
+           'start_duration=0:start_silence=0.02',
+    dst,
+  ], { stdio: 'inherit' });
+  return dst;
+}
+
 // ── Modes ───────────────────────────────────────────────────────────────────
 
 if (has('--voices')) {
@@ -170,16 +196,18 @@ if (process.argv.includes('--verify')) {
   console.log(`\n  ${cues.length} rendered cues · track ${meta.track}s · timeline ${meta.timeline}s\n`);
   let bad = 0;
   cues.forEach((c, i) => {
-    const end = c.at + c.dur;
-    const next = cues[i + 1]?.at;
+    // `spoken` is where the first syllable is; older transcripts only have `at`.
+    const start = c.spoken ?? c.at;
+    const end = start + c.dur;
+    const next = cues[i + 1] ? (cues[i + 1].spoken ?? cues[i + 1].at) : undefined;
     if (next === undefined) return;
     const gap = next - end;
     if (gap < 0) {
       bad++;
-      console.log(`  ✗  ${mmss(c.at)} runs ${(-gap).toFixed(2)}s into the next line`);
+      console.log(`  ✗  ${mmss(start)} runs ${(-gap).toFixed(2)}s into the next line`);
       console.log(`     “${c.text.slice(0, 72)}…”`);
     } else if (gap < 0.3) {
-      console.log(`  ~  ${mmss(c.at)} leaves only ${gap.toFixed(2)}s  “${c.text.slice(0, 48)}…”`);
+      console.log(`  ~  ${mmss(start)} leaves only ${gap.toFixed(2)}s  “${c.text.slice(0, 48)}…”`);
     }
   });
   const tail = meta.track - meta.timeline;
@@ -219,12 +247,17 @@ mkdirSync(WORK, { recursive: true });
 mkdirSync(OUT_DIR, { recursive: true });
 
 const rendered = [];
+let trimmedTotal = 0;
 for (const [i, cue] of CUES.entries()) {
-  const file = join(WORK, `cue-${String(i).padStart(2, '0')}.wav`);
+  const raw = join(WORK, `cue-${String(i).padStart(2, '0')}.raw.wav`);
+  let file = join(WORK, `cue-${String(i).padStart(2, '0')}.wav`);
   let dur;
   if (creds) {
-    await synthesize(ssmlFor(cue, voice), creds, file);
+    await synthesize(ssmlFor(cue, voice), creds, raw);
+    const before = ffprobe(raw);
+    file = trimLeadIn(raw, file);
     dur = ffprobe(file);
+    trimmedTotal += before - dur;
   } else {
     // ~2.4 words a second, which is what the voice averages at this rate.
     // Estimate only, and a rough one: 2.75 words/second calibrated against the
@@ -232,12 +265,14 @@ for (const [i, cue] of CUES.entries()) {
     // prosody rate still push the real figure up to ~1.5s higher, so treat a
     // small predicted overlap as noise and use --verify after rendering for
     // the authoritative answer.
-    const raw = cue.ssml ?? cue.text;
-    const breaks = [...raw.matchAll(/<break time="(\d+)ms"/g)]
+    const body = cue.ssml ?? cue.text;
+    const breaks = [...body.matchAll(/<break time="(\d+)ms"/g)]
       .reduce((n, m) => n + Number(m[1]) / 1000, 0);
-    dur = raw.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length / 2.75 + breaks;
+    dur = body.replace(/<[^>]+>/g, '').split(/\s+/).filter(Boolean).length / 2.75 + breaks;
   }
-  rendered.push({ ...cue, file, dur });
+  // `at` is where the picture is. `spoken` is where the first syllable goes:
+  // a hair earlier, so the voice leads the screen rather than trailing it.
+  rendered.push({ ...cue, file, dur, spoken: Math.max(0, cue.at - LEAD) });
   process.stdout.write(`\r  ${i + 1}/${CUES.length} cues`);
 }
 console.log('');
@@ -248,20 +283,20 @@ const mmss = (v) => `${Math.floor(v / 60)}:${String(Math.floor(v % 60)).padStart
 let problems = 0;
 console.log('\n  start    end   len   line');
 rendered.forEach((c, i) => {
-  const end = c.at + c.dur;
+  const end = c.spoken + c.dur;
   const next = rendered[i + 1];
   // Less than a breath between two cues reads as one run-on sentence, so
   // treat a missing gap as a timing problem rather than only an overlap.
-  const clash = next && end > next.at - 0.35;
+  const clash = next && end > next.spoken - 0.35;
   const over = c.at >= TOTAL;
   if (clash || over) problems++;
   console.log(
-    `  ${mmss(c.at).padStart(5)}  ${mmss(end).padStart(5)}  ${c.dur.toFixed(1).padStart(4)}  ` +
+    `  ${mmss(c.spoken).padStart(5)}  ${mmss(end).padStart(5)}  ${c.dur.toFixed(1).padStart(4)}  ` +
     `${(c.ssml ?? c.text).replace(/<[^>]+>/g, '').slice(0, 62)}` +
-    `${clash ? `   ⚠ leaves only ${(next.at - end).toFixed(1)}s before the next cue` : ''}` +
+    `${clash ? `   ⚠ leaves only ${(next.spoken - end).toFixed(1)}s before the next cue` : ''}` +
     `${over ? '   ⚠ starts after the timeline has ended' : ''}`);
 });
-const trackEnd = Math.max(TOTAL, ...rendered.map((c) => c.at + c.dur)) + 1.2;
+const trackEnd = Math.max(TOTAL, ...rendered.map((c) => c.spoken + c.dur)) + 1.2;
 const tail = trackEnd - 1.2 - TOTAL;
 const speech = rendered.reduce((a, c) => a + c.dur, 0);
 if (tail > 0.05) {
@@ -281,10 +316,15 @@ if (!creds) process.exit(problems ? 1 : 0);
 // One silent bed the exact length of the timeline, with each cue mixed in at
 // its own position. adelay places them to the millisecond, so the spoken track
 // lines up with the picture no matter how fast the voice turns out to be.
+//
+// The position is `spoken`, not `at`: the files have had their lead-in silence
+// trimmed, so a delay of N puts the first SYLLABLE at N — and `spoken` is `at`
+// less LEAD, which is what puts the voice a breath in front of the picture
+// instead of a tenth of a second behind it.
 
 const inputs = rendered.flatMap((c) => ['-i', c.file]);
 const filter = rendered
-  .map((c, i) => `[${i}:a]adelay=${Math.round(c.at * 1000)}:all=1[d${i}]`)
+  .map((c, i) => `[${i}:a]adelay=${Math.round(c.spoken * 1000)}:all=1[d${i}]`)
   .join(';') +
   ';' + rendered.map((_, i) => `[d${i}]`).join('') +
   `amix=inputs=${rendered.length}:normalize=0:dropout_transition=0[mix];` +
@@ -302,12 +342,16 @@ execFileSync('ffmpeg', [
 writeFileSync(join(OUT_DIR, 'narration.json'), JSON.stringify({
   voice, prosody: PROSODY, timeline: TOTAL, track: +trackEnd.toFixed(2),
   renderedAt: new Date().toISOString(),
-  cues: rendered.map(({ at, dur, text, ssml, note }) => ({
-    at, dur: +dur.toFixed(2), text: (ssml ?? text).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), note,
+  lead: LEAD,
+  cues: rendered.map(({ at, spoken, dur, text, ssml, note }) => ({
+    at, spoken: +spoken.toFixed(2), dur: +dur.toFixed(2),
+    text: (ssml ?? text).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(), note,
   })),
 }, null, 2) + '\n');
 
 rmSync(WORK, { recursive: true, force: true });
+console.log(`\n  lead-in silence trimmed: ${(trimmedTotal / rendered.length * 1000).toFixed(0)}ms ` +
+            `a cue on average; every line then placed ${(LEAD * 1000).toFixed(0)}ms ahead of its mark.`);
 console.log(`\n  ${m4a}  ${mmss(ffprobe(m4a))}  ${voice}`);
 console.log(`  ${join(OUT_DIR, 'narration.json')}  (transcript, for the record)`);
 console.log('\n  Voice only. Run `node tools/score.mjs` to add the music bed and');

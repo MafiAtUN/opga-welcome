@@ -357,28 +357,6 @@ export function buildOrigin(host, { seconded, un, sendingCountries }) {
   return { blocks: [a, b], flags: [...flags.children], line, div: wrap.querySelector('.origin-div') };
 }
 
-export function buildGroupBloom(host, byRegionalGroup, total) {
-  host.innerHTML = '';
-  const C = 2 * Math.PI * 42;
-  return [...byRegionalGroup].map(([name, n]) => {
-    const d = el('div', 'gb');
-    const frac = n / total;
-    d.innerHTML =
-      `<div class="ring">
-         <svg viewBox="0 0 100 100">
-           <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(79,200,245,0.16)" stroke-width="4"/>
-           <circle class="arc" cx="50" cy="50" r="42" fill="none" stroke="var(--blue)" stroke-width="4"
-                   stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}"/>
-         </svg>
-         <div class="rn">${n}</div>
-       </div>
-       <div class="gname">${name.replace(' Group', '')}</div>`;
-    host.appendChild(d);
-    return { node: d, arc: d.querySelector('.arc'), offset: C * (1 - frac) };
-  });
-}
-
-
 // ── 7 · The President's six priorities ──────────────────────────────────────
 
 export function buildPillars(host, pillars) {

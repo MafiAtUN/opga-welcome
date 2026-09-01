@@ -7,14 +7,20 @@
 //  split and the regional groups. Nothing is hardcoded anywhere else.
 //  Correct a row here and the whole presentation updates.
 //
-//  Roster confirmed by the Office on 30 August 2026 — 34 colleagues. This
-//  supersedes the 18 August directory, which listed posts since filled,
-//  vacated or withdrawn, and whose own tally (34) never matched its tables.
+//  Roster confirmed by the Office on 30 August 2026 — 34 colleagues, plus the
+//  three arrivals confirmed on 1 September 2026 (Thailand, Qatar and the
+//  Russian Federation), which brings the Office to 37. This supersedes the 18 August
+//  directory, which listed posts since filled, vacated or withdrawn, and whose
+//  own tally (34) never matched its tables.
+//
+//  The Russian Federation arrival closes the last gap in both of the things
+//  this presentation claims: the fifth regional group and the sixth official
+//  language of the United Nations.
 //
 //  FIELDS
 //    countries — nationality, in order. Two entries means dual nationality:
 //                BOTH light up on the globe, and the FIRST is used for the
-//                regional-group count so the totals still sum to 34.
+//                regional-group count so the totals still sum to 37.
 //    gender    — 'M' | 'F', from the honorific on the roster.
 //    languages — first is treated as the mother tongue. English is included
 //                for everyone as the working language of the Office.
@@ -316,7 +322,9 @@ export const STAFF = [
     id: 'dalci', name: 'Mr. Emirhan Dalci',
     title: 'Communications Adviser',
     team: 'Communications and Media',
-    countries: ['Türkiye'], gender: 'M',
+    // Dual national. Both light up on the globe; Türkiye stays first, so he is
+    // counted once — under WEOG — in the regional groups.
+    countries: ['Türkiye', 'Germany'], gender: 'M',
     languages: ['Turkish', 'German', 'English', 'French'],
     seconded: false, photo: 'dalci.jpg',
     verified: true,
@@ -370,6 +378,50 @@ export const STAFF = [
     seconded: false, photo: 'stephan.jpg',
     verified: true
   },
+
+  // ── Joining · team and title to be confirmed ──────────────────────────────
+  //
+  //  Confirmed to the Office on 1 September 2026. None has been placed on a
+  //  team yet, so `team` is left blank rather than guessed — exactly as the
+  //  blank titles above are. They are still counted everywhere a person is
+  //  counted: the globe, the languages, the gender split, the regional groups.
+  {
+    id: 'devakula', name: 'Ms. Devikara Prim Devakula',
+    title: 'Senior Adviser',
+    team: '',
+    countries: ['Thailand'], gender: 'F',
+    languages: ['Thai', 'Mandarin Chinese', 'English'],
+    seconded: true, photo: 'devakula.jpg',
+    verified: false,
+    note: 'Title confirmed as Senior Adviser; team not yet assigned by the Office. ' +
+          'Secondment is assumed from the pattern of the other Senior Advisers — ' +
+          'confirm before the meeting, it moves the "how we came here" figures.',
+  },
+  {
+    id: 'althani', name: 'Ms. Haya Abdulrahman Al Thani',
+    title: '',
+    team: '',
+    countries: ['Qatar'], gender: 'F',
+    languages: ['Arabic', 'English'],
+    seconded: true, photo: 'althani.jpg',
+    verified: false,
+    note: 'Team and title not yet assigned by the Office — confirm both before the meeting.',
+  },
+  {
+    // Name withheld until the Office confirms it. A row with no name is counted
+    // in every figure and lights the Russian Federation on the globe, but draws
+    // no face card and no name in the ticker — better an honest gap than a
+    // placeholder on a welcome slide. Fill in `name` and a card appears.
+    id: 'ru-incoming', name: '',
+    title: '',
+    team: '',
+    countries: ['Russian Federation'], gender: 'M',
+    languages: ['Russian', 'English'],
+    seconded: true, photo: '',
+    verified: false,
+    note: 'Name, team and title all still to be confirmed. Until `name` is filled in the ' +
+          'faces scene shows no card for him and the globe ticker reads "1 colleague".',
+  },
 ];
 
 /**
@@ -378,6 +430,6 @@ export const STAFF = [
  * Set INCLUDE_PENDING to true once confirmed and they appear on the globe.
  */
 export const PENDING_COUNTRIES = [
-  'Republic of Korea', 'United Kingdom', 'Russian Federation', 'France',
+  'Republic of Korea', 'United Kingdom', 'France',
 ];
 export const INCLUDE_PENDING = false;

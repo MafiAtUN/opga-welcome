@@ -112,12 +112,15 @@ transcribed from `assets/Vision-Statement-Bangaldesh-PGA81.docx`. Setting
 alone.
 
 Every number in the presentation — the headline counts, which countries light up
-on the globe, the language cloud, the gender split, the funding bar, the regional
-groups — is derived from that file at runtime by `src/derive.js`. Nothing is
-hardcoded anywhere else.
+on the globe, the language cloud, the gender split, the funding bar — is derived
+from that file at runtime by `src/derive.js`. Nothing is hardcoded anywhere else.
 
-Correct one person's country and the globe, the nationality count, the regional
-bloom and the closing line all update together.
+Correct one person's country and the globe, the nationality count, the language
+cloud and the closing line all update together. Two claims flip themselves once
+the data supports them: the official-languages line in scene 6 reads "five of
+the six" and names which five until all six are actually spoken, and the spoken
+figures in `data/narration.js` are checked against the roster by
+`npm run figures`.
 
 ### Checking the data
 
@@ -332,7 +335,7 @@ need to know the narration exists.
 | 5 | The people, region by region | 38s |
 | 6 | Languages | 27s |
 | 7 | The President's six priorities | 31s |
-| 8 | Gender, how we came here, regional groups | 28s |
+| 8 | Gender, and how we came here | 28s |
 | 9 | Close — everything returns to the mark | 19s |
 
 Stills of each are in `preview/`.
@@ -406,15 +409,25 @@ transcribed from them lives in `data/`.
 - **No contract type, grade or funding line appears anywhere on screen**, by
   request. The composition scene says only how many colleagues governments
   seconded and how many the United Nations employs.
-- **Five of the six official UN languages** are spoken in the office — Russian is
-  the gap. The presentation says so honestly rather than overclaiming, and the
-  line updates itself if that changes. The directory's trailing note mentions
-  Russia among incoming secondments, which would complete the set.
+- **All six official UN languages** are now spoken in the office. Russian was the
+  gap until the Russian Federation secondment was confirmed on 1 September 2026;
+  the on-screen line and the voice both say "all six" only because the data
+  supports it, and both fall back to "five of the six" — naming which five — if
+  that row is ever removed.
+- **The Russian Federation colleague has no name on the roster yet.** The row is
+  in `data/staff.js` with `name: ''`, which counts them in every figure and
+  lights Russia on the globe but deliberately draws no face card and no name in
+  the globe ticker, where the country reads "1 colleague" instead. Fill in
+  `name` and the card appears. Their team and title are still blank, as are
+  Ms. Haya Abdulrahman Al Thani's and Ms. Devikara Prim Devakula's team — and
+  Ms. Devakula's secondment is assumed from the pattern of the other Senior
+  Advisers, which moves a spoken figure if it is wrong. See `verify.html`.
 - **The "Welcome." card in scene 2 is never seen.** It is set to fade in at
   15.6s into a scene that is 15s long, so it reveals after its own container
   has been hidden. Either lengthen scene 2 in `SCENE_LIST` or bring the reveal
   forward. The narration reaches the same beat by voice, so it is not a hole in
   the run — but it was meant to be on screen.
-- The trailing note also lists ROK, UK, Russia, USA, México and France. They are
-  in `PENDING_COUNTRIES` in `data/staff.js` but excluded from the counts. Set
-  `INCLUDE_PENDING = true` once they are confirmed.
+- The trailing note also lists ROK, UK, USA, México and France. They are in
+  `PENDING_COUNTRIES` in `data/staff.js` but excluded from the counts. Set
+  `INCLUDE_PENDING = true` once they are confirmed. (Russia was on that list and
+  has now been confirmed, so it has moved into the roster proper.)

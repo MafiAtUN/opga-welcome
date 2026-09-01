@@ -158,7 +158,8 @@ export const REGION_SWEEP = [
   { label: 'Middle East',   test: (c) => ['Saudi Arabia', 'Oman', 'Iraq', 'Qatar'].includes(c) },
   { label: 'South Asia',    test: (c) => ['Bangladesh', 'Pakistan', 'India'].includes(c) },
   { label: 'East Asia',     test: (c) => ['China', 'Japan', 'Republic of Korea'].includes(c) },
-  { label: 'Southeast Asia & Oceania', test: (c) => ['Malaysia', 'Indonesia', 'Australia'].includes(c) },
+  { label: 'Southeast Asia & Oceania',
+    test: (c) => ['Malaysia', 'Indonesia', 'Thailand', 'Australia'].includes(c) },
   { label: 'Europe',        test: (c) => ['Germany', 'Spain', 'Norway', 'Ireland', 'United Kingdom', 'Türkiye', 'France', 'Russian Federation'].includes(c) },
   // Split in two: as one bucket the Americas held ten of the thirty-four and
   // wrapped into a wall of cards while every other panel showed four to six.
