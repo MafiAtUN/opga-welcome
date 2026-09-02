@@ -31,8 +31,7 @@ will behave identically.
 | `1`–`9`, `0` | jump to a scene (`0` is the tenth) |
 | `F` | toggle fullscreen |
 | `R` | restart from the beginning |
-| `M` | mute the narration |
-| `M` | mute / unmute the voiceover |
+| `M` | mute / unmute the narration |
 | `D` | debug overlay (scene, elapsed time, fps) |
 
 It auto-plays the whole run. The keys are there so you can hold on a moment if
@@ -95,6 +94,40 @@ it is giving up sharpness to stay smooth, and it should not have to.
 
 ---
 
+## The Office, in numbers
+
+As at 2 September 2026. Every one of these is computed from `data/staff.js` at
+runtime and none of them is hardcoded in the presentation — the table below is a
+snapshot for reading, not a source. If the roster has moved since, `verify.html`
+is the copy to trust.
+
+| | |
+|---|---|
+| Colleagues | **37** |
+| Nationalities | **28** |
+| Languages | **21** |
+| Teams | **9** |
+| UN regional groups | **5** — all of them |
+| Official UN languages spoken | **6** — all of them |
+
+- **Languages**, most spoken first: English 37 · French 6 · Arabic 5 · Bangla 4 ·
+  Spanish 4 · Mandarin Chinese 3 · German 2 · Malay 2 · Japanese 2 · Turkish 2 ·
+  then one speaker each of Wolof, isiZulu, Bajan Creole, Kittitian Creole,
+  Setswana, Norwegian, Irish, Indonesian, Haitian Creole, Thai and Russian.
+  English is counted for everyone as the working language of the Office.
+- **Regional groups**: Asia-Pacific 15 · WEOG 11 · Latin America and the
+  Caribbean 6 · African 4 · Eastern European 1. A dual national is counted once,
+  under the first nationality listed, so the groups still sum to 37.
+- **Gender**: 24 women, 13 men — 65 per cent women.
+- **How we came here**: 17 colleagues released to this Office by 16 governments,
+  20 employed by the United Nations.
+
+The three arrivals confirmed on 1 September — Thailand, Qatar and the Russian
+Federation — are what closed the last two gaps: the fifth regional group, and
+Russian as the sixth official language.
+
+---
+
 ## Changing the content
 
 **Staff data comes from `data/staff.js`.** It is the single source of truth for
@@ -112,7 +145,7 @@ transcribed from `assets/Vision-Statement-Bangaldesh-PGA81.docx`. Setting
 alone.
 
 Every number in the presentation — the headline counts, which countries light up
-on the globe, the language cloud, the gender split, the funding bar — is derived
+on the globe, the language cloud, the gender split, how we came here — is derived
 from that file at runtime by `src/derive.js`. Nothing is hardcoded anywhere else.
 
 Correct one person's country and the globe, the nationality count, the language
@@ -361,7 +394,7 @@ scene transforms into the next.
   `d3.geoContains` took fifteen seconds of loading screen; drawing the same
   geometry into a bitmap and sampling it takes milliseconds, and at one dot per
   few hundred kilometres nothing on screen can tell the difference. Country membership is resolved with
-  `d3.geoContains` against only the ~31 nations we have staff from, rejected by
+  `d3.geoContains` against only the 28 nations we have staff from, rejected by
   bounding box first. Barbados, Saint Kitts and Nevis and the Dominican Republic
   are too small for the 110m atlas, so they get an explicit cluster of dots at
   their centroid — they are real colleagues and are not going to be invisible
@@ -392,10 +425,10 @@ present.
 ## Published copy
 
 The review link above is a **public** GitHub Pages site: anyone with the URL can
-open it, and it carries the real roster — names, nationalities, gender, titles,
-grades, contract types and 23 headshots. Twenty of those rows still contain a
-nationality or language that was inferred rather than read from the directory
-(see `verify.html`). Take the site down with `gh api -X DELETE repos/MafiAtUN/opga-welcome/pages`,
+open it, and it carries the real roster — names, nationalities, gender, titles
+and 33 headshots. Three rows still carry a field the Office has not confirmed,
+and two carry a mother tongue inferred from nationality rather than read from
+the directory (see `verify.html`). Take the site down with `gh api -X DELETE repos/MafiAtUN/opga-welcome/pages`,
 or make the repository private, if that is not wanted.
 
 The source documents are deliberately **not** committed — the 93MB 80th-session
@@ -404,8 +437,9 @@ transcribed from them lives in `data/`.
 
 ## Known limits
 
-- **One nationality is still unconfirmed** — the roster reads "Ms. Yuan Cheng —
-  China (??)". Everything else was confirmed by the Office on 30 August.
+- **Three rows are still unconfirmed**, all of them among the 1 September
+  arrivals — see the Russian Federation bullet below, and `verify.html`. The
+  other thirty-four were confirmed by the Office on 30 August.
 - **No contract type, grade or funding line appears anywhere on screen**, by
   request. The composition scene says only how many colleagues governments
   seconded and how many the United Nations employs.
