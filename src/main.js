@@ -855,7 +855,7 @@ function scenePriorities(tl, i) {
 //
 // Two panels, not three. The third used to break the Office down by UN
 // regional group, and a ring reading "4" over the African Group is a fact
-// about a 36-person office that reads on a screen as a judgement about it.
+// about a 37-person office that reads on a screen as a judgement about it.
 // The claim worth making — that all five groups are now here — is one
 // sentence, and the voice makes it over the close instead.
 //

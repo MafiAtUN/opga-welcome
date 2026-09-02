@@ -137,7 +137,8 @@ const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? '—').replace(/[<>&]/g, (c) => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' }[c]));
 
 $('#lede').innerHTML =
-  `Roster confirmed by the Office on 30 August 2026: <b>${STAFF.length} colleagues</b> ` +
+  `Roster confirmed by the Office on 30 August 2026, plus the three arrivals ` +
+  `confirmed on 1 September: <b>${STAFF.length} colleagues</b> ` +
   `from <b>${D.STATS.countries} nationalities</b>, speaking <b>${D.STATS.languages} languages</b>. ` +
   (D.unverified.length
     ? `<b>${D.unverified.length}</b> row(s) still carry something unconfirmed — see below.`

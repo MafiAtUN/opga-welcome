@@ -161,7 +161,7 @@ export const REGION_SWEEP = [
   { label: 'Southeast Asia & Oceania',
     test: (c) => ['Malaysia', 'Indonesia', 'Thailand', 'Australia'].includes(c) },
   { label: 'Europe',        test: (c) => ['Germany', 'Spain', 'Norway', 'Ireland', 'United Kingdom', 'Türkiye', 'France', 'Russian Federation'].includes(c) },
-  // Split in two: as one bucket the Americas held ten of the thirty-four and
+  // Split in two: as one bucket the Americas held ten of the thirty-seven and
   // wrapped into a wall of cards while every other panel showed four to six.
   { label: 'North America', test: (c) => ['United States', 'Canada'].includes(c) },
   { label: 'Latin America & the Caribbean',

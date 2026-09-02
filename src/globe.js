@@ -6,7 +6,7 @@
 //  the light pillars, the great-circle arcs to UN Headquarters, and a fresnel
 //  atmosphere.
 //
-//  Country membership is resolved with d3.geoContains against the ~30 nations
+//  Country membership is resolved with d3.geoContains against the 28 nations
 //  we actually care about (bounding-box rejected first), which is exact and
 //  far cheaper than testing every country in the atlas.
 // ═══════════════════════════════════════════════════════════════════════════
